@@ -15,5 +15,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         People people = new People();
         Scheduler scheduler = new Scheduler(people.getPeople());
+        System.out.println(scheduler.getScheduled());
     }
 }

@@ -30,5 +30,7 @@ public class Scheduler {
         }));
     }
 
-
+    public Map<Integer, List<String>> getScheduled() {
+        return scheduled;
+    }
 }
