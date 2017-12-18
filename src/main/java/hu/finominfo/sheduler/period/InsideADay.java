@@ -5,7 +5,8 @@ package hu.finominfo.sheduler.period;
  */
 public enum InsideADay {
     DAY('d'),
-    NIGHT('n');
+    NIGHT('n'),
+    ALL('a');
 
     private final char sign;
 
@@ -16,5 +17,14 @@ public enum InsideADay {
 
     public char getSign() {
         return sign;
+    }
+
+    public static InsideADay get(char sign) {
+        for (InsideADay insideADay : InsideADay.values()) {
+            if (insideADay.getSign() == sign) {
+                return insideADay;
+            }
+        }
+        return null;
     }
 }

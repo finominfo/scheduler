@@ -14,7 +14,7 @@ public class Person {
     private final List<Period> scheduledPeriods = new ArrayList<>();
 
     public Person(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public String getName() {

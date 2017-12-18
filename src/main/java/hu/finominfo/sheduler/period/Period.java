@@ -19,4 +19,14 @@ public class Period {
     public InsideADay getInsideADay() {
         return insideADay;
     }
+
+    public static Period create (String expression) {
+        String trimmedExpression = expression.trim();
+        char lastChar = trimmedExpression.charAt(trimmedExpression.length() - 1);
+        if (Character.isDigit(lastChar)) {
+            return new Period(Integer.valueOf(trimmedExpression), InsideADay.ALL);
+        } else {
+            return new Period(Integer.valueOf(trimmedExpression.substring(0, trimmedExpression.length() - 1)), InsideADay.get(lastChar));
+        }
+    }
 }
