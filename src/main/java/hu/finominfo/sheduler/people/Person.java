@@ -1,7 +1,5 @@
 package hu.finominfo.sheduler.people;
 
-import hu.finominfo.sheduler.period.Period;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,22 +8,41 @@ import java.util.List;
  */
 public class Person {
     private final String name;
-    private final List<Period> notGoodPeriods = new ArrayList<>();
-    private final List<Period> scheduledPeriods = new ArrayList<>();
+    private final List<Integer> hatedDays = new ArrayList<>();
+    private final List<Integer> wantedDays = new ArrayList<>();
+
+    private volatile boolean experienced = true;
+    private volatile boolean heWantsNextWeekend = false;
 
     public Person(String name) {
-        this.name = name.trim();
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Period> getNotGoodPeriods() {
-        return notGoodPeriods;
+    public List<Integer> getHatedDays() {
+        return hatedDays;
     }
 
-    public List<Period> getScheduledPeriods() {
-        return scheduledPeriods;
+    public List<Integer> getWantedDays() {
+        return wantedDays;
+    }
+
+    public boolean isExperienced() {
+        return experienced;
+    }
+
+    public void setExperienced(boolean experienced) {
+        this.experienced = experienced;
+    }
+
+    public boolean isHeWantsNextWeekend() {
+        return heWantsNextWeekend;
+    }
+
+    public void setHeWantsNextWeekend(boolean heWantsNextWeekend) {
+        this.heWantsNextWeekend = heWantsNextWeekend;
     }
 }
