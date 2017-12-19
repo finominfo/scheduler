@@ -1,4 +1,4 @@
-package hu.finominfo.sheduler.common;
+package hu.finominfo.scheduler.common;
 
 /**
  * Created by kalman.kovacs@globessey.local on 2017.12.18.

@@ -1,4 +1,4 @@
-package hu.finominfo.sheduler.people;
+package hu.finominfo.scheduler.people;
 
 import java.util.ArrayList;
 import java.util.List;

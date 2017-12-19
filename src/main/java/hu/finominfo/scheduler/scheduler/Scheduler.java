@@ -1,6 +1,6 @@
-package hu.finominfo.sheduler.scheduler;
+package hu.finominfo.scheduler.scheduler;
 
-import hu.finominfo.sheduler.people.Person;
+import hu.finominfo.scheduler.people.Person;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

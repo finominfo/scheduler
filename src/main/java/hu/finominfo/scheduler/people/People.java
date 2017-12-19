@@ -1,6 +1,6 @@
-package hu.finominfo.sheduler.people;
+package hu.finominfo.scheduler.people;
 
-import hu.finominfo.sheduler.common.Globals;
+import hu.finominfo.scheduler.common.Globals;
 
 import java.io.IOException;
 import java.nio.file.Files;

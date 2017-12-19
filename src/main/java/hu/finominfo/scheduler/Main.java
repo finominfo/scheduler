@@ -1,8 +1,7 @@
-package hu.finominfo.sheduler;
+package hu.finominfo.scheduler;
 
-import hu.finominfo.sheduler.people.People;
-import hu.finominfo.sheduler.people.Person;
-import hu.finominfo.sheduler.scheduler.Scheduler;
+import hu.finominfo.scheduler.people.People;
+import hu.finominfo.scheduler.scheduler.Scheduler;
 
 import java.io.IOException;
 import java.time.LocalDate;

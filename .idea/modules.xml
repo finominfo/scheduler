@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/scheduler.iml" filepath="$PROJECT_DIR$/scheduler.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sheduler.iml" filepath="$PROJECT_DIR$/sheduler.iml" />
     </modules>
   </component>
 </project>
