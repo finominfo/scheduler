@@ -17,12 +17,12 @@ public class Scheduler {
     private final List<Integer> weekends = new ArrayList<>();
     private final int numOfDays;
     private final LocalDate localDate;
-    private volatile boolean weekendWasScheduled = false;
+    private volatile boolean weekendIsScheduledNow = false;
 
     public Scheduler(Map<String, Person> people, LocalDate date) {
         this.people = people;
-        this.numOfDays = date.getDayOfMonth();
-        for (int i = 0; i < numOfDays; i++) {
+        this.numOfDays = date.lengthOfMonth();
+        for (int i = 0; i < numOfDays + 1; i++) {
             scheduled.put(i, new HashSet<>());
             hated.put(i, new HashSet<>());
         }
@@ -31,7 +31,11 @@ public class Scheduler {
         setWanted();
         countWeekends();
         setWeekends();
+        if (!weekendIsScheduledNow) {
+            setWeekdays();
+        }
     }
+
 
     // --------------------------------------------------------------------------------------------------
 
@@ -89,7 +93,7 @@ public class Scheduler {
         }
     }
 
-    private void uniteSaturdayAndSunday() {
+    private void uniteSaturdaysAndSundays() {
         for (int i = 0; i < weekends.size(); i++) {
             int saturdayNumber = weekends.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
@@ -104,21 +108,31 @@ public class Scheduler {
     }
 
     private void setWeekends() {
-        uniteSaturdayAndSunday();
+        uniteSaturdaysAndSundays();
         for (int i = 0; i < weekends.size(); i++) {
             int saturdayNumber = weekends.get(i);
+            int sundayNumber = saturdayNumber + 1;
+            int fridayNumber = saturdayNumber - 1;
+            int mondayNumber = saturdayNumber + 2;
             Set<String> saturday = scheduled.get(saturdayNumber);
             while (saturday.size() < 2) {
-                weekendWasScheduled = true;
+                weekendIsScheduledNow = true;
                 final Set<String> possibleNames = new HashSet<>();
                 possibleNames.addAll(people.keySet());
                 weekends.stream().forEach(satNum -> possibleNames.removeAll(scheduled.get(satNum)));
+
+                possibleNames.removeAll(hated.get(saturdayNumber));
+                possibleNames.removeAll(hated.get(sundayNumber));
+
+                possibleNames.removeAll(scheduled.get(fridayNumber));
+                possibleNames.removeAll(scheduled.get(mondayNumber));
+
                 if (possibleNames.isEmpty()) {
                     noPossibleNames(i, saturday);
                 } else {
                     thereIsPossibleNames(saturday, possibleNames);
                 }
-                uniteSaturdayAndSunday();
+                uniteSaturdaysAndSundays();
             }
         }
     }
@@ -145,16 +159,39 @@ public class Scheduler {
 
     private void thereIsPossibleNames(Set<String> saturday, Set<String> possibleNames) {
         if (saturday.isEmpty()) {
-            Optional<String> anyExperienced = possibleNames.stream().filter(name -> people.get(name).isExperienced()).findAny();
-            if (anyExperienced.isPresent()) {
-                saturday.add(anyExperienced.get());
-            } else {
-                throw new RuntimeException("There is no experienced people in possibleNames " +
-                        possibleNames.stream().map(e -> e.toString() + " ").reduce("", String::concat));
-            }
+            try2AddNoFoFirst(saturday, possibleNames);
         } else {
-            saturday.add(((String[]) possibleNames.toArray())[random.nextInt(possibleNames.size())]);
+            if (people.get(saturday.iterator().next()).isExperienced()) {
+                try2AddNoFoFirst(saturday, possibleNames);
+            } else {
+                try2AddExperienced(saturday, possibleNames);
+            }
         }
+    }
+
+    private void try2AddNoFoFirst(Set<String> saturday, Set<String> possibleNames) {
+        Optional<String> anyNoFo = possibleNames.stream().filter(name -> !people.get(name).isExperienced()).findAny();
+        if (anyNoFo.isPresent()) {
+            saturday.add(anyNoFo.get());
+        } else {
+            try2AddExperienced(saturday, possibleNames);
+        }
+    }
+
+    private void try2AddExperienced(Set<String> saturday, Set<String> possibleNames) {
+        Optional<String> anyExperienced = possibleNames.stream().filter(name -> people.get(name).isExperienced()).findAny();
+        if (anyExperienced.isPresent()) {
+            saturday.add(anyExperienced.get());
+        } else {
+            throw new RuntimeException("There is no experienced people in possibleNames " +
+                    possibleNames.stream().map(e -> e.toString() + " ").reduce("", String::concat));
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------------
+
+    private void setWeekdays() {
+
     }
 
     // --------------------------------------------------------------------------------------------------
