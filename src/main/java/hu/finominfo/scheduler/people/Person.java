@@ -12,7 +12,13 @@ public class Person {
     private final List<Integer> wantedDays = new ArrayList<>();
 
     private volatile boolean experienced = true;
-    private volatile boolean heWantsNextWeekend = false;
+    private volatile boolean hatesWeekends = false;
+    private volatile boolean hatesWeekdays = false;
+    private volatile boolean hatesMondays = false;
+    private volatile boolean hatesTuesdays = false;
+    private volatile boolean hatesWednesdays = false;
+    private volatile boolean hatesThursdays = false;
+    private volatile boolean hatesFridays = false;
 
     public Person(String name) {
         this.name = name;
@@ -38,11 +44,59 @@ public class Person {
         this.experienced = experienced;
     }
 
-    public boolean isHeWantsNextWeekend() {
-        return heWantsNextWeekend;
+    public boolean isHatesWeekends() {
+        return hatesWeekends;
     }
 
-    public void setHeWantsNextWeekend(boolean heWantsNextWeekend) {
-        this.heWantsNextWeekend = heWantsNextWeekend;
+    public void setHatesWeekends(boolean hatesWeekends) {
+        this.hatesWeekends = hatesWeekends;
+    }
+
+    public boolean isHatesWeekdays() {
+        return hatesWeekdays;
+    }
+
+    public void setHatesWeekdays(boolean hatesWeekdays) {
+        this.hatesWeekdays = hatesWeekdays;
+    }
+
+    public boolean isHatesMondays() {
+        return hatesMondays;
+    }
+
+    public void setHatesMondays(boolean hatesMondays) {
+        this.hatesMondays = hatesMondays;
+    }
+
+    public boolean isHatesTuesdays() {
+        return hatesTuesdays;
+    }
+
+    public void setHatesTuesdays(boolean hatesTuesdays) {
+        this.hatesTuesdays = hatesTuesdays;
+    }
+
+    public boolean isHatesWednesdays() {
+        return hatesWednesdays;
+    }
+
+    public void setHatesWednesdays(boolean hatesWednesdays) {
+        this.hatesWednesdays = hatesWednesdays;
+    }
+
+    public boolean isHatesThursdays() {
+        return hatesThursdays;
+    }
+
+    public void setHatesThursdays(boolean hatesThursdays) {
+        this.hatesThursdays = hatesThursdays;
+    }
+
+    public boolean isHatesFridays() {
+        return hatesFridays;
+    }
+
+    public void setHatesFridays(boolean hatesFridays) {
+        this.hatesFridays = hatesFridays;
     }
 }

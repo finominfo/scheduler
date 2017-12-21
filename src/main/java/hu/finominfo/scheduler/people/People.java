@@ -5,21 +5,23 @@ import hu.finominfo.scheduler.common.Globals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by kalman.kovacs@globessey.local on 2017.12.18.
  */
 public class People {
     private final Map<String, Person> people = new HashMap<>();
+    private final Map<Integer, Set<String>> hated = new HashMap<>();
+
 
     public People() throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(Globals.getInstance().getConfigFile())));
         String lines[] = content.split("\\r?\\n");
-        List<String> keywords = Arrays.asList(new String[]{"nofo", "next"});
+        for (int i = 0; i < 31 + 1; i++) {
+            hated.put(i, new HashSet<>());
+        }
+        List<String> keywords = Arrays.asList(new String[]{"nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri"});
         Arrays.asList(lines).stream().forEach(line -> {
             Person person = null;
             for (String expression : line.split(",")) {
@@ -32,8 +34,26 @@ public class People {
                         case "nofo" :
                             person.setExperienced(false);
                             break;
-                        case "next" :
-                            person.setHeWantsNextWeekend(true);
+                        case "hend" :
+                            person.setHatesWeekends(true);
+                            break;
+                        case "hweek" :
+                            person.setHatesWeekdays(true);
+                            break;
+                        case "hmon" :
+                            person.setHatesMondays(true);
+                            break;
+                        case "htue" :
+                            person.setHatesTuesdays(true);
+                            break;
+                        case "hwen" :
+                            person.setHatesWednesdays(true);
+                            break;
+                        case "hthu" :
+                            person.setHatesThursdays(true);
+                            break;
+                        case "hfri" :
+                            person.setHatesFridays(true);
                             break;
                     }
                 } else {
@@ -47,6 +67,7 @@ public class People {
                             break;
                         case 'h' :
                             person.getHatedDays().add(day);
+
                             if (person.getWantedDays().contains(day)) {
                                 throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
                             }

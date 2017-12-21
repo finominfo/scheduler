@@ -2,7 +2,6 @@ package hu.finominfo.scheduler.scheduler;
 
 import hu.finominfo.scheduler.people.Person;
 
-import java.lang.reflect.Array;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -15,7 +14,13 @@ public class Scheduler {
     private final Map<String, Person> people;
     private final Map<Integer, Set<String>> scheduled = new HashMap<>();
     private final Map<Integer, Set<String>> hated = new HashMap<>();
-    private final List<Integer> weekends = new ArrayList<>();
+    private final List<Integer> mondays = new ArrayList<>();
+    private final List<Integer> tuesdays = new ArrayList<>();
+    private final List<Integer> wednesdays = new ArrayList<>();
+    private final List<Integer> thursdays = new ArrayList<>();
+    private final List<Integer> fridays = new ArrayList<>();
+    private final List<Integer> saturdays = new ArrayList<>();
+    private final List<Integer> sundays = new ArrayList<>();
     private final int numOfDays;
     private final LocalDate localDate;
     private volatile boolean weekendIsScheduledNow = false;
@@ -28,9 +33,9 @@ public class Scheduler {
             hated.put(i, new HashSet<>());
         }
         this.localDate = date.withDayOfMonth(1);
+        countDays();
         setHated();
         setWanted();
-        countWeekends();
         setWeekends();
         if (!weekendIsScheduledNow) {
             setWeekdays();
@@ -41,6 +46,26 @@ public class Scheduler {
     // --------------------------------------------------------------------------------------------------
 
     private void setHated() {
+        people.entrySet().stream().forEach(entry -> {
+            Person person = entry.getValue();
+            if (person.isHatesMondays()) mondays.forEach(day -> person.getHatedDays().add(day));
+            if (person.isHatesTuesdays()) tuesdays.forEach(day -> person.getHatedDays().add(day));
+            if (person.isHatesWednesdays()) wednesdays.forEach(day -> person.getHatedDays().add(day));
+            if (person.isHatesThursdays()) thursdays.forEach(day -> person.getHatedDays().add(day));
+            if (person.isHatesFridays()) fridays.forEach(day -> person.getHatedDays().add(day));
+            if (person.isHatesWeekends()) {
+                saturdays.forEach(day -> person.getHatedDays().add(day));
+                sundays.forEach(day -> person.getHatedDays().add(day));
+            }
+            if (person.isHatesWeekdays()) {
+                mondays.forEach(day -> person.getHatedDays().add(day));
+                tuesdays.forEach(day -> person.getHatedDays().add(day));
+                wednesdays.forEach(day -> person.getHatedDays().add(day));
+                thursdays.forEach(day -> person.getHatedDays().add(day));
+                fridays.forEach(day -> person.getHatedDays().add(day));
+            }
+        });
+
         people.entrySet().stream().forEach(entry -> entry.getValue().getHatedDays().forEach(hatedDay -> {
             Set<String> set = hated.get(hatedDay);
             set.add(entry.getKey());
@@ -84,19 +109,39 @@ public class Scheduler {
 
     // --------------------------------------------------------------------------------------------------
 
-    private void countWeekends() {
+    private void countDays() {
         LocalDate result = localDate;
         while (result.getMonthValue() == localDate.getMonthValue()) {
-            if (result.getDayOfWeek() == DayOfWeek.SATURDAY) {
-                weekends.add(result.getDayOfMonth());
+            switch (result.getDayOfWeek()) {
+                case MONDAY:
+                    mondays.add(result.getDayOfMonth());
+                    break;
+                case TUESDAY:
+                    tuesdays.add(result.getDayOfMonth());
+                    break;
+                case WEDNESDAY:
+                    wednesdays.add(result.getDayOfMonth());
+                    break;
+                case THURSDAY:
+                    thursdays.add(result.getDayOfMonth());
+                    break;
+                case FRIDAY:
+                    fridays.add(result.getDayOfMonth());
+                    break;
+                case SATURDAY:
+                    saturdays.add(result.getDayOfMonth());
+                    break;
+                case SUNDAY:
+                    sundays.add(result.getDayOfMonth());
+                    break;
             }
             result = result.plusDays(1);
         }
     }
 
     private void uniteSaturdaysAndSundays() {
-        for (int i = 0; i < weekends.size(); i++) {
-            int saturdayNumber = weekends.get(i);
+        for (int i = 0; i < saturdays.size(); i++) {
+            int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             Set<String> sunday = scheduled.get(saturdayNumber + 1);
             saturday.addAll(sunday);
@@ -119,8 +164,8 @@ public class Scheduler {
         final List<Set<String>> possibilitiesOfWeekends = new ArrayList<>();
         final List<Integer> sizeOfPossibilitiesOfWeekends = new ArrayList<>();
 
-        for (int i = 0; i < weekends.size(); i++) {
-            int saturdayNumber = weekends.get(i);
+        for (int i = 0; i < saturdays.size(); i++) {
+            int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             final Set<String> possibilities = getPossibilities(saturdayNumber);
             possibilitiesOfWeekends.add(possibilities);
@@ -145,7 +190,7 @@ public class Scheduler {
         if (threeLowestSizeOfPossibilities.get(0) < threeLowestSizeOfPossibilities.get(2)) {
             for (int i = 0; i < sizeOfPossibilitiesOfWeekends.size(); i++) {
                 if (threeLowestSizeOfPossibilities.get(0) == sizeOfPossibilitiesOfWeekends.get(i)) {
-                    int saturdayNumber = weekends.get(i);
+                    int saturdayNumber = saturdays.get(i);
                     Set<String> saturday = scheduled.get(saturdayNumber);
                     final Set<String> possibilities = getPossibilities(saturdayNumber);
                     thereIsPossibleNames(possibilities, saturday);
@@ -161,7 +206,7 @@ public class Scheduler {
         if (threeLowestSizeOfPossibilities.get(1) < threeLowestSizeOfPossibilities.get(2)) {
             for (int i = 0; i < sizeOfPossibilitiesOfWeekends.size(); i++) {
                 if (threeLowestSizeOfPossibilities.get(1) == sizeOfPossibilitiesOfWeekends.get(i)) {
-                    int saturdayNumber = weekends.get(i);
+                    int saturdayNumber = saturdays.get(i);
                     Set<String> saturday = scheduled.get(saturdayNumber);
                     final Set<String> possibilities = getPossibilities(saturdayNumber);
                     if (Math.abs(iWas - i) == 1) {
@@ -192,8 +237,8 @@ public class Scheduler {
     }
 
     private void setRemainingWeekends() {
-        for (int i = 0; i < weekends.size(); i++) {
-            int saturdayNumber = weekends.get(i);
+        for (int i = 0; i < saturdays.size(); i++) {
+            int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             while (saturday.size() < 2) {
                 weekendIsScheduledNow = true;
@@ -216,7 +261,7 @@ public class Scheduler {
 
         final Set<String> possibilities = new HashSet<>();
         possibilities.addAll(people.keySet());
-        weekends.stream().forEach(satNum -> possibilities.removeAll(scheduled.get(satNum)));
+        saturdays.stream().forEach(satNum -> possibilities.removeAll(scheduled.get(satNum)));
 
         possibilities.removeAll(hated.get(saturdayNumber));
         possibilities.removeAll(hated.get(sundayNumber));
@@ -227,7 +272,7 @@ public class Scheduler {
     }
 
     private void noPossibleNames(int i, Set<String> saturday) {
-        int otherSaturdayNumber = weekends.get(i < weekends.size() / 2 ? weekends.size() - 1 : 0);
+        int otherSaturdayNumber = saturdays.get(i < saturdays.size() / 2 ? saturdays.size() - 1 : 0);
         Set<String> otherSaturday = scheduled.get(otherSaturdayNumber);
         if (saturday.isEmpty()) {
             saturday.addAll(otherSaturday);
