@@ -29,7 +29,7 @@ public class Scheduler {
     public Scheduler(Map<String, Person> people, LocalDate date) {
         this.people = people;
         this.numOfDays = date.lengthOfMonth();
-        for (int i = 0; i < numOfDays + 2; i++) {
+        for (int i = -4; i < numOfDays + 5; i++) {
             scheduled.put(i, new HashSet<>());
             hated.put(i, new HashSet<>());
         }
@@ -203,7 +203,7 @@ public class Scheduler {
                     iWas = i;
                     saturdayWas = saturday;
                     sizeOfPossibilitiesOfWeekends.set(i, 1000);
-                    System.out.println("1 weekend was set: " + saturdayNumber);
+                    //System.out.println("1 weekend was set: " + saturdayNumber);
                     break;
                 }
             }
@@ -219,7 +219,7 @@ public class Scheduler {
                         possibilities.removeAll(saturdayWas);
                     }
                     thereIsPossibleNames(possibilities, saturday);
-                    System.out.println("2 weekend was set: " + saturdayNumber);
+                    //System.out.println("2 weekend was set: " + saturdayNumber);
                     break;
                 }
             }
@@ -340,26 +340,26 @@ public class Scheduler {
     // --------------------------------------------------------------------------------------------------
 
     private void setWeekdays() {
-        Map.Entry<Integer, Set<String>> entry = getTheMostHatedAndNotScheduledDay();
-        while (entry.getValue() != null) {
+        Map.Entry<Integer, Set<String>> dayPersons = getTheMostHatedAndNotScheduledDay();
+        while (dayPersons.getValue() != null) {
             //System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue().toArray()));
-            List<String> orderedPersons = getTheFewestScheduledPerson(entry.getValue());
-            if (scheduled.get(entry.getKey()).isEmpty()) {
-                scheduled.get(entry.getKey()).add(orderedPersons.get(0));
+            List<String> orderedPersons = getTheFewestScheduledPerson(dayPersons);
+            if (scheduled.get(dayPersons.getKey()).isEmpty()) {
+                scheduled.get(dayPersons.getKey()).add(orderedPersons.get(0));
                 if (people.get(orderedPersons.get(0)).isExperienced()) {
-                    scheduled.get(entry.getKey()).add(orderedPersons.get(1));
+                    scheduled.get(dayPersons.getKey()).add(orderedPersons.get(1));
                 } else {
-                    findFirstExperienced(entry, orderedPersons);
+                    findFirstExperienced(dayPersons, orderedPersons);
                 }
             } else {
-                if (people.get(scheduled.get(entry.getKey()).iterator().next()).isExperienced()) {
-                    findFirstNotTheSame(entry, orderedPersons);
+                if (people.get(scheduled.get(dayPersons.getKey()).iterator().next()).isExperienced()) {
+                    findFirstNotTheSame(dayPersons, orderedPersons);
                 } else {
-                    findFirstExperienced(entry, orderedPersons);
+                    findFirstExperienced(dayPersons, orderedPersons);
                 }
             }
             //System.out.println(Arrays.toString(scheduled.get(entry.getKey()).toArray()));
-            entry = getTheMostHatedAndNotScheduledDay();
+            dayPersons = getTheMostHatedAndNotScheduledDay();
         }
     }
 
@@ -389,12 +389,23 @@ public class Scheduler {
         return new AbstractMap.SimpleEntry<>(position, result2);
     }
 
-    private List<String> getTheFewestScheduledPerson(Set<String> persons) {
+    private List<String> getTheFewestScheduledPerson(Map.Entry<Integer, Set<String>> dayPersons) {
+        int day = dayPersons.getKey();
+        Set<String> persons = dayPersons.getValue();
         final List<String> retVal = new ArrayList<>();
         final Map<String, Integer> scheduleNumbers = new HashMap<>();
         persons.stream().forEach(name -> scheduleNumbers.put(name, 0));
         scheduled.entrySet().stream().forEach(entry -> entry.getValue().stream().forEach(name -> {
-            if (persons.contains(name)) scheduleNumbers.put(name, scheduleNumbers.get(name) + 1);
+            if (persons.contains(name)) {
+                scheduleNumbers.put(name, scheduleNumbers.get(name) + 4);
+                //System.out.println("day: " + day);
+                if (scheduled.get(day - 2).contains(name) || scheduled.get(day + 2).contains(name)) {
+                    scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
+                }
+                if (scheduled.get(day - 3).contains(name) || scheduled.get(day + 3).contains(name)) {
+                    scheduleNumbers.put(name, scheduleNumbers.get(name) + 1);
+                }
+            }
         }));
         while (!scheduleNumbers.isEmpty()) {
             Map.Entry<String, Integer> min = Collections.min(scheduleNumbers.entrySet(), Comparator.comparingInt(Map.Entry::getValue));

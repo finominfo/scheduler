@@ -17,6 +17,6 @@ public class Main {
         LocalDate localDate = LocalDateTime.now().toLocalDate().plusMonths(1);
         People people = new People();
         Scheduler scheduler = new Scheduler(people.getPeople(), localDate);
-        System.out.println(scheduler.getScheduled());
+        //System.out.println(scheduler.getScheduled());
     }
 }
