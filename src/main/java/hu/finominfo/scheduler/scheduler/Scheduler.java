@@ -5,6 +5,7 @@ import hu.finominfo.scheduler.people.Person;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kks on 2017.12.18..
@@ -28,7 +29,7 @@ public class Scheduler {
     public Scheduler(Map<String, Person> people, LocalDate date) {
         this.people = people;
         this.numOfDays = date.lengthOfMonth();
-        for (int i = 0; i < numOfDays + 1; i++) {
+        for (int i = 0; i < numOfDays + 2; i++) {
             scheduled.put(i, new HashSet<>());
             hated.put(i, new HashSet<>());
         }
@@ -37,9 +38,9 @@ public class Scheduler {
         setHated();
         setWanted();
         setWeekends();
-        if (!weekendIsScheduledNow) {
-            setWeekdays();
-        }
+        //if (!weekendIsScheduledNow) {
+        setWeekdays();
+        //}
     }
 
 
@@ -272,7 +273,7 @@ public class Scheduler {
     }
 
     private void noPossibleNames(int i, Set<String> saturday) {
-        int otherSaturdayNumber = saturdays.get(i < saturdays.size() / 2 ? saturdays.size() - 1 : 0);
+        int otherSaturdayNumber = getOtherSaturdayNumber(i);
         Set<String> otherSaturday = scheduled.get(otherSaturdayNumber);
         if (saturday.isEmpty()) {
             saturday.addAll(otherSaturday);
@@ -289,6 +290,15 @@ public class Scheduler {
                 }
             }
         }
+    }
+
+    //TODO: Make it more sophisticated!!!
+    private int getOtherSaturdayNumber(int i) {
+        int otherSaturdayNumber = saturdays.get(i < saturdays.size() / 2 ? i + 2 : i - 2);
+        if (scheduled.get(otherSaturdayNumber).size() < 2) {
+            otherSaturdayNumber = saturdays.get(i == 0 ? 3 : i == 3 ? 0 : i < saturdays.size() / 2 ? i + 1 : i - 1);
+        }
+        return otherSaturdayNumber;
     }
 
     private void thereIsPossibleNames(Set<String> possibilities, Set<String> saturday) {
@@ -325,7 +335,89 @@ public class Scheduler {
     // --------------------------------------------------------------------------------------------------
 
     private void setWeekdays() {
+        Map.Entry<Integer, Set<String>> entry = getTheMostHatedAndNotScheduledDay();
+        while (entry.getValue() != null) {
+            System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue().toArray()));
+            List<String> orderedPersons = getTheFewestScheduledPerson(entry.getValue());
+            if (scheduled.get(entry.getKey()).isEmpty()) {
+                scheduled.get(entry.getKey()).add(orderedPersons.get(0));
+                if (people.get(orderedPersons.get(0)).isExperienced()) {
+                    scheduled.get(entry.getKey()).add(orderedPersons.get(1));
+                } else {
+                    findFirstExperienced(entry, orderedPersons);
+                }
+            } else {
+                if (people.get(scheduled.get(entry.getKey()).iterator().next()).isExperienced()) {
+                    findFirstNotTheSame(entry, orderedPersons);
+                } else {
+                    findFirstExperienced(entry, orderedPersons);
+                }
+            }
+            System.out.println(Arrays.toString(scheduled.get(entry.getKey()).toArray()));
+            entry = getTheMostHatedAndNotScheduledDay();
+        }
+    }
 
+
+    private Map.Entry<Integer, Set<String>> getTheMostHatedAndNotScheduledDay() {
+        int mostHated = -1;
+        int position = -1;
+        Set<String> result = null;
+        Set<String> result2 = null;
+        for (int i = 1; i < numOfDays + 1; i++) {
+            if (scheduled.get(i).size() < 2) {
+                Set<String> dayHated = new HashSet<>();
+                dayHated.addAll(hated.get(i));
+                dayHated.addAll(scheduled.get(i));
+                dayHated.addAll(scheduled.get(i - 1));
+                dayHated.addAll(scheduled.get(i + 1));
+                if (dayHated.size() > mostHated) {
+                    mostHated = dayHated.size();
+                    position = i;
+                    result = dayHated;
+                }
+                result2 = new HashSet<>();
+                result2.addAll(people.keySet());
+                result2.removeAll(result);
+            }
+        }
+        return new AbstractMap.SimpleEntry<>(position, result2);
+    }
+
+    private List<String> getTheFewestScheduledPerson(Set<String> persons) {
+        final List<String> retVal = new ArrayList<>();
+        final Map<String, Integer> scheduleNumbers = new HashMap<>();
+        persons.stream().forEach(name -> scheduleNumbers.put(name, 0));
+        scheduled.entrySet().stream().forEach(entry -> entry.getValue().stream().forEach(name -> {
+            if (persons.contains(name)) scheduleNumbers.put(name, scheduleNumbers.get(name) + 1);
+        }));
+        while (!scheduleNumbers.isEmpty()) {
+            Map.Entry<String, Integer> min = Collections.min(scheduleNumbers.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
+            retVal.add(min.getKey());
+            scheduleNumbers.remove(min.getKey());
+        }
+        return retVal;
+    }
+
+    private void findFirstExperienced(Map.Entry<Integer, Set<String>> entry, List<String> orderedPersons) {
+        Optional<String> first = orderedPersons.stream().filter(name -> people.get(name).isExperienced()
+                && !scheduled.get(entry.getKey()).contains(name)).findFirst();
+        if (first.isPresent()) {
+            scheduled.get(entry.getKey()).add(first.get());
+        } else {
+            throw new RuntimeException("There is no experienced people on " + entry.getKey() + ". " +
+                    orderedPersons.stream().map(e -> e.toString() + " ").reduce("", String::concat));
+        }
+    }
+
+    private void findFirstNotTheSame(Map.Entry<Integer, Set<String>> entry, List<String> orderedPersons) {
+        Optional<String> first = orderedPersons.stream().filter(name -> !scheduled.get(entry.getKey()).contains(name)).findFirst();
+        if (first.isPresent()) {
+            scheduled.get(entry.getKey()).add(first.get());
+        } else {
+            throw new RuntimeException("There is not enogh people on " + entry.getKey() + ". " +
+                    orderedPersons.stream().map(e -> e.toString() + " ").reduce("", String::concat));
+        }
     }
 
     // --------------------------------------------------------------------------------------------------
