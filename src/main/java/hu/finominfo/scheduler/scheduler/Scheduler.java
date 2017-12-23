@@ -41,6 +41,11 @@ public class Scheduler {
         //if (!weekendIsScheduledNow) {
         setWeekdays();
         //}
+        scheduled.forEach((key, value) -> {
+            if (!value.isEmpty()) {
+                System.out.println(key + " -> " + value);
+            }
+        });
     }
 
 
@@ -337,7 +342,7 @@ public class Scheduler {
     private void setWeekdays() {
         Map.Entry<Integer, Set<String>> entry = getTheMostHatedAndNotScheduledDay();
         while (entry.getValue() != null) {
-            System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue().toArray()));
+            //System.out.println(entry.getKey() + " " + Arrays.toString(entry.getValue().toArray()));
             List<String> orderedPersons = getTheFewestScheduledPerson(entry.getValue());
             if (scheduled.get(entry.getKey()).isEmpty()) {
                 scheduled.get(entry.getKey()).add(orderedPersons.get(0));
@@ -353,7 +358,7 @@ public class Scheduler {
                     findFirstExperienced(entry, orderedPersons);
                 }
             }
-            System.out.println(Arrays.toString(scheduled.get(entry.getKey()).toArray()));
+            //System.out.println(Arrays.toString(scheduled.get(entry.getKey()).toArray()));
             entry = getTheMostHatedAndNotScheduledDay();
         }
     }
