@@ -41,13 +41,8 @@ public class Scheduler {
         //if (!weekendIsScheduledNow) {
         setWeekdays();
         //}
-        scheduled.forEach((key, value) -> {
-            if (!value.isEmpty()) {
-                System.out.println(key + " -> " + value);
-            }
-        });
-    }
 
+    }
 
     // --------------------------------------------------------------------------------------------------
 
@@ -397,7 +392,7 @@ public class Scheduler {
         persons.stream().forEach(name -> scheduleNumbers.put(name, 0));
         scheduled.entrySet().stream().forEach(entry -> entry.getValue().stream().forEach(name -> {
             if (persons.contains(name)) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 4);
+                scheduleNumbers.put(name, scheduleNumbers.get(name) + 7);
                 //System.out.println("day: " + day);
                 if (scheduled.get(day - 2).contains(name) || scheduled.get(day + 2).contains(name)) {
                     scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);

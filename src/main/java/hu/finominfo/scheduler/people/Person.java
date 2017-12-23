@@ -1,7 +1,10 @@
 package hu.finominfo.scheduler.people;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kalman.kovacs@globessey.local on 2017.12.18.
@@ -9,7 +12,8 @@ import java.util.List;
 public class Person {
     private final String name;
     private final List<Integer> hatedDays = new ArrayList<>();
-    private final List<Integer> wantedDays = new ArrayList<>();
+    private final Set<Integer> wantedDays = new HashSet<>();
+    private final AtomicInteger numOfScheduled = new AtomicInteger(0);
 
     private volatile boolean experienced = true;
     private volatile boolean hatesWeekends = false;
@@ -19,6 +23,10 @@ public class Person {
     private volatile boolean hatesWednesdays = false;
     private volatile boolean hatesThursdays = false;
     private volatile boolean hatesFridays = false;
+
+    public AtomicInteger getNumOfScheduled() {
+        return numOfScheduled;
+    }
 
     public Person(String name) {
         this.name = name;
@@ -32,7 +40,7 @@ public class Person {
         return hatedDays;
     }
 
-    public List<Integer> getWantedDays() {
+    public Set<Integer> getWantedDays() {
         return wantedDays;
     }
 
