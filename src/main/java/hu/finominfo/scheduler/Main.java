@@ -29,13 +29,14 @@ public class Main {
 
         People people = new People();
         Scheduler scheduler = new Scheduler(people.getPeople(), localDate);
+        final StringBuilder toTxtFile = new StringBuilder();
         scheduler.getScheduled().forEach((key, value) -> {
             if (!value.isEmpty()) {
                 Iterator<String> iterator = value.iterator();
                 String name1 = iterator.next();
                 String name2 = iterator.next();
                 String names = people.getPeople().get(name1).isExperienced() ? name1 + " - " + name2 : name2 + ", " + name1;
-                System.out.println(key + " -> " + names);
+                toTxtFile.append(key + " -> " + names);
             }
         });
         scheduler.getScheduled().entrySet().stream().forEach(entry ->
@@ -50,7 +51,9 @@ public class Main {
             entry.getValue().getWantedDays().forEach(value -> toFile.append(", w" + value));
             toFile.append(System.lineSeparator());
         });
-        System.out.println(toFile.toString());
+        toTxtFile.append(toFile);
+        String fileNameTxt = "schedule-" + localDate.getYear() + "-" + localDate.getMonthValue() + ".txt";
+        Files.write(Paths.get(fileNameTxt), toTxtFile.toString().getBytes("UTF-8"), StandardOpenOption.CREATE);
         String fileName = "schedule-" + localDate.getYear() + "-" + localDate.getMonthValue() + ".csv";
         Files.write(Paths.get(fileName), toFile.toString().getBytes("UTF-8"), StandardOpenOption.CREATE);
 
