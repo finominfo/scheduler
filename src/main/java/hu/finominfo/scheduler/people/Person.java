@@ -14,6 +14,7 @@ public class Person {
     private final List<Integer> hatedDays = new ArrayList<>();
     private final Set<Integer> wantedDays = new HashSet<>();
     private final AtomicInteger numOfScheduled = new AtomicInteger(0);
+    private final AtomicInteger manualDayDifference = new AtomicInteger(0);
 
     private volatile boolean experienced = true;
     private volatile boolean hatesWeekends = false;
@@ -26,6 +27,10 @@ public class Person {
 
     public AtomicInteger getNumOfScheduled() {
         return numOfScheduled;
+    }
+
+    public AtomicInteger getManualDayDifference() {
+        return manualDayDifference;
     }
 
     public Person(String name) {

@@ -57,20 +57,26 @@ public class People {
                             break;
                     }
                 } else {
-                    final int day = Integer.valueOf(trimmedExpression.substring(1));
+                    final int number = Integer.valueOf(trimmedExpression.substring(1));
                     switch (trimmedExpression.charAt(0)) {
                         case 'w' :
-                            person.getWantedDays().add(day);
-                            if (person.getHatedDays().contains(day)) {
-                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                            person.getWantedDays().add(number);
+                            if (person.getHatedDays().contains(number)) {
+                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + number);
                             }
                             break;
                         case 'h' :
-                            person.getHatedDays().add(day);
+                            person.getHatedDays().add(number);
 
-                            if (person.getWantedDays().contains(day)) {
-                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                            if (person.getWantedDays().contains(number)) {
+                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + number);
                             }
+                            break;
+                        case '+' :
+                            person.getManualDayDifference().getAndSet(number);
+                            break;
+                        case '-' :
+                            person.getManualDayDifference().getAndSet(-number);
                             break;
                     }
                 }

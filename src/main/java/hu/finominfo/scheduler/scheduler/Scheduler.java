@@ -2,7 +2,6 @@ package hu.finominfo.scheduler.scheduler;
 
 import hu.finominfo.scheduler.people.Person;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +23,6 @@ public class Scheduler {
     private final List<Integer> sundays = new ArrayList<>();
     private final int numOfDays;
     private final LocalDate localDate;
-    private volatile boolean weekendIsScheduledNow = false;
 
     public Scheduler(Map<String, Person> people, LocalDate date) {
         this.people = people;
@@ -38,9 +36,7 @@ public class Scheduler {
         setHated();
         setWanted();
         setWeekends();
-        //if (!weekendIsScheduledNow) {
         setWeekdays();
-        //}
 
     }
 
@@ -242,7 +238,6 @@ public class Scheduler {
             int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             while (saturday.size() < 2) {
-                weekendIsScheduledNow = true;
                 final Set<String> possibilities = getPossibilities(saturdayNumber);
                 if (possibilities.isEmpty()) {
                     noPossibleNames(i, saturday);
@@ -402,6 +397,8 @@ public class Scheduler {
                 }
             }
         }));
+        scheduleNumbers.entrySet().stream().forEach(entry ->  scheduleNumbers.put(entry.getKey(),
+                entry.getValue() - (people.get(entry.getKey()).getManualDayDifference().get() * 7)));
         while (!scheduleNumbers.isEmpty()) {
             Map.Entry<String, Integer> min = Collections.min(scheduleNumbers.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
             retVal.add(min.getKey());
