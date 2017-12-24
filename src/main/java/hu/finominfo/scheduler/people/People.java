@@ -31,52 +31,67 @@ public class People {
                     people.put(trimmedExpression, person);
                 } else if (keywords.contains(trimmedExpression.toLowerCase())) {
                     switch (trimmedExpression.toLowerCase()) {
-                        case "nofo" :
+                        case "nofo":
                             person.setExperienced(false);
                             break;
-                        case "hend" :
+                        case "hend":
                             person.setHatesWeekends(true);
                             break;
-                        case "hweek" :
+                        case "hweek":
                             person.setHatesWeekdays(true);
                             break;
-                        case "hmon" :
+                        case "hmon":
                             person.setHatesMondays(true);
                             break;
-                        case "htue" :
+                        case "htue":
                             person.setHatesTuesdays(true);
                             break;
-                        case "hwen" :
+                        case "hwen":
                             person.setHatesWednesdays(true);
                             break;
-                        case "hthu" :
+                        case "hthu":
                             person.setHatesThursdays(true);
                             break;
-                        case "hfri" :
+                        case "hfri":
                             person.setHatesFridays(true);
                             break;
                     }
                 } else {
-                    final int number = Integer.valueOf(trimmedExpression.substring(1));
+                    String remaining = trimmedExpression.substring(1);
+                    final List<Integer> days = new ArrayList<Integer>();
+                    if (remaining.contains("-")) {
+                        String[] split = remaining.split("-");
+                        int start = Integer.valueOf(split[0]);
+                        int end = Integer.valueOf(split[1]);
+                        while (start <= end) {
+                            days.add(start);
+                            start++;
+                        }
+                    } else {
+                        days.add(Integer.valueOf(remaining));
+                    }
                     switch (trimmedExpression.charAt(0)) {
-                        case 'w' :
-                            person.getWantedDays().add(number);
-                            if (person.getHatedDays().contains(number)) {
-                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + number);
+                        case 'w':
+                            person.getWantedDays().addAll(days);
+                            for (int day : days) {
+                                if (person.getHatedDays().contains(day)) {
+                                    throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                                }
                             }
                             break;
-                        case 'h' :
-                            person.getHatedDays().add(number);
-
-                            if (person.getWantedDays().contains(number)) {
-                                throw new RuntimeException(person.getName() + " wants and hates the same day: " + number);
+                        case 'h':
+                            person.getHatedDays().addAll(days);
+                            for (int day : days) {
+                                if (person.getWantedDays().contains(day)) {
+                                    throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                                }
                             }
                             break;
-                        case '+' :
-                            person.getManualDayDifference().getAndSet(number);
+                        case '+':
+                            person.getManualDayDifference().getAndSet(days.get(0));
                             break;
-                        case '-' :
-                            person.getManualDayDifference().getAndSet(-number);
+                        case '-':
+                            person.getManualDayDifference().getAndSet(-(days.get(0)));
                             break;
                     }
                 }
