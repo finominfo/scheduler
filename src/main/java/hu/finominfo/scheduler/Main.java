@@ -37,6 +37,7 @@ public class Main {
                 String name2 = iterator.next();
                 String names = people.getPeople().get(name1).isExperienced() ? name1 + " - " + name2 : name2 + ", " + name1;
                 toTxtFile.append(key + " -> " + names);
+                toTxtFile.append(System.lineSeparator());
             }
         });
         scheduler.getScheduled().entrySet().stream().forEach(entry ->
@@ -46,7 +47,8 @@ public class Main {
                 }));
         final StringBuilder toFile = new StringBuilder();
         people.getPeople().entrySet().forEach(entry -> {
-            System.out.println(entry.getKey() + " - " + entry.getValue().getNumOfScheduled().get());
+            toTxtFile.append(entry.getKey() + " - " + entry.getValue().getNumOfScheduled().get());
+            toTxtFile.append(System.lineSeparator());
             toFile.append(entry.getKey());
             entry.getValue().getWantedDays().forEach(value -> toFile.append(", w" + value));
             toFile.append(System.lineSeparator());
