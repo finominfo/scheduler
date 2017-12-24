@@ -79,8 +79,10 @@ public class Main {
 
         StringBuilder toFile3 = new StringBuilder();
         allScheduledAmount.entrySet().forEach(entry -> {
-            toFile3.append(entry.getKey() + " - " + entry.getValue().get());
-            toFile3.append(System.lineSeparator());
+            if (entry.getValue().get() > 0) {
+                toFile3.append(entry.getKey() + " - " + entry.getValue().get());
+                toFile3.append(System.lineSeparator());
+            }
         });
         System.out.println(toFile3.toString());
         String fileName3 = "schedule-" + localDate.getYear() + ".txt";
