@@ -1,9 +1,6 @@
 package hu.finominfo.scheduler.people;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -13,10 +10,10 @@ public class Person {
     private final String name;
     private final List<Integer> hatedDays = new ArrayList<>();
     private final Set<Integer> wantedDays = new HashSet<>();
+    private final Map<Integer, Type> types = new HashMap<>();
     private final AtomicInteger numOfScheduled = new AtomicInteger(0);
     private final AtomicInteger manualDayDifference = new AtomicInteger(0);
 
-    private volatile boolean experienced = true;
     private volatile boolean hatesWeekends = false;
     private volatile boolean hatesWeekdays = false;
     private volatile boolean hatesMondays = false;
@@ -35,10 +32,25 @@ public class Person {
 
     public Person(String name) {
         this.name = name;
+        for (int i = -5; i < 36; i++) {
+            types.put(i, Type.FO_AND_BO);
+        }
     }
 
     public String getName() {
         return name;
+    }
+
+    public Map<Integer, Type> getTypes() {
+        return types;
+    }
+
+    public Type getType(int day) {
+        return types.get(day);
+    }
+
+    public void setType (int day, Type type) {
+        types.put(day, type);
     }
 
     public List<Integer> getHatedDays() {
@@ -47,14 +59,6 @@ public class Person {
 
     public Set<Integer> getWantedDays() {
         return wantedDays;
-    }
-
-    public boolean isExperienced() {
-        return experienced;
-    }
-
-    public void setExperienced(boolean experienced) {
-        this.experienced = experienced;
     }
 
     public boolean isHatesWeekends() {
@@ -112,4 +116,5 @@ public class Person {
     public void setHatesFridays(boolean hatesFridays) {
         this.hatesFridays = hatesFridays;
     }
+
 }

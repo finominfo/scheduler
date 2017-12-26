@@ -32,7 +32,9 @@ public class People {
                 } else if (keywords.contains(trimmedExpression.toLowerCase())) {
                     switch (trimmedExpression.toLowerCase()) {
                         case "nofo":
-                            person.setExperienced(false);
+                            for (int day : person.getTypes().keySet()) {
+                                person.setType(day, Type.BO);
+                            }
                             break;
                         case "hend":
                             person.setHatesWeekends(true);
@@ -86,6 +88,12 @@ public class People {
                                     throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
                                 }
                             }
+                            break;
+                        case 'f':
+                            for (int day : days) person.setType(day, Type.FO);
+                            break;
+                        case 'b':
+                            for (int day : days) person.setType(day, Type.BO);
                             break;
                         case '+':
                             person.getManualDayDifference().getAndSet(days.get(0));

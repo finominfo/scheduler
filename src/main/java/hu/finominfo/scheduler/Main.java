@@ -2,6 +2,7 @@ package hu.finominfo.scheduler;
 
 import hu.finominfo.scheduler.common.Globals;
 import hu.finominfo.scheduler.people.People;
+import hu.finominfo.scheduler.people.Type;
 import hu.finominfo.scheduler.scheduler.Scheduler;
 
 import java.io.File;
@@ -35,7 +36,7 @@ public class Main {
                 Iterator<String> iterator = value.iterator();
                 String name1 = iterator.next();
                 String name2 = iterator.next();
-                String names = people.getPeople().get(name1).isExperienced() ? name1 + " - " + name2 : name2 + ", " + name1;
+                String names = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key)) ? name1 + " - " + name2 : name2 + ", " + name1;
                 toTxtFile.append(key + " -> " + names);
                 toTxtFile.append(System.lineSeparator());
             }
