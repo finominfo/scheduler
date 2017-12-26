@@ -27,7 +27,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         LocalDate localDate;
         if (args != null && args.length == 1) {
-            localDate = LocalDate.of(Integer.valueOf(args[0].substring(0, 2)), Integer.valueOf(args[0].substring(2)), 1);
+            System.out.println(args[0]);
+            localDate = LocalDate.of(2000 + Integer.valueOf(args[0].substring(0, 2)), Integer.valueOf(args[0].substring(2)), 1);
         } else {
             localDate = LocalDateTime.now().toLocalDate().plusMonths(1);
         }
@@ -84,7 +85,7 @@ public class Main {
                     value.addAndGet(split.length - 1);
                 });
             }
-            previousDate = localDate.minusMonths(1);
+            previousDate = previousDate.minusMonths(1);
         }
 
         StringBuilder toFile3 = new StringBuilder();
