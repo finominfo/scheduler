@@ -25,8 +25,12 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-
-        LocalDate localDate = LocalDateTime.now().toLocalDate().plusMonths(1);
+        LocalDate localDate;
+        if (args != null && args.length == 1) {
+            localDate = LocalDate.of(Integer.valueOf(args[0].substring(0, 2)), Integer.valueOf(args[0].substring(2)), 1);
+        } else {
+            localDate = LocalDateTime.now().toLocalDate().plusMonths(1);
+        }
 
         People people = new People();
         Scheduler scheduler = new Scheduler(people.getPeople(), localDate);
