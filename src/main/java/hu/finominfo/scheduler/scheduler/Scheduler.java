@@ -147,7 +147,10 @@ public class Scheduler {
             int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             Set<String> sunday = scheduled.get(saturdayNumber + 1);
-            if (saturday.isEmpty() || sunday.isEmpty()) {
+            Set<String> sum = new HashSet<>();
+            sum.addAll(saturday);
+            sum.addAll(sunday);
+            if (sum.size() <= 2) {
                 saturday.addAll(sunday);
                 sunday.addAll(saturday);
                 if (saturday.size() > 2) {
@@ -188,6 +191,10 @@ public class Scheduler {
                     scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
                 }
                 if (scheduled.get(saturdayNumber - 7).contains(name) || scheduled.get(saturdayNumber + 7).contains(name)) {
+                    scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
+                }
+
+                if (scheduled.get(saturdayNumber - 6).contains(name) || scheduled.get(saturdayNumber + 8).contains(name)) {
                     scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
                 }
             }
