@@ -3,10 +3,8 @@ package hu.finominfo.scheduler.scheduler;
 import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.people.Type;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kks on 2017.12.18..
@@ -149,11 +147,13 @@ public class Scheduler {
             int saturdayNumber = saturdays.get(i);
             Set<String> saturday = scheduled.get(saturdayNumber);
             Set<String> sunday = scheduled.get(saturdayNumber + 1);
-            saturday.addAll(sunday);
-            sunday.addAll(saturday);
-            if (saturday.size() > 2) {
-                throw new RuntimeException("More than two people want the " + (i + 1) + ". weekend: " +
-                        saturday.stream().map(e -> e.toString() + " ").reduce("", String::concat));
+            if (saturday.isEmpty() || sunday.isEmpty()) {
+                saturday.addAll(sunday);
+                sunday.addAll(saturday);
+                if (saturday.size() > 2) {
+                    throw new RuntimeException("More than two people want the " + (i + 1) + ". weekend: " +
+                            saturday.stream().map(e -> e.toString() + " ").reduce("", String::concat));
+                }
             }
         }
     }

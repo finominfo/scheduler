@@ -37,11 +37,11 @@ public class Main {
         Scheduler scheduler = new Scheduler(people.getPeople(), localDate);
         final StringBuilder toTxtFile = new StringBuilder();
         scheduler.getScheduled().forEach((key, value) -> {
-            if (!value.isEmpty()) {
+            if (value.size() == 2) {
                 Iterator<String> iterator = value.iterator();
                 String name1 = iterator.next();
                 String name2 = iterator.next();
-                String names = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key)) ? name1 + " - " + name2 : name2 + ", " + name1;
+                String names = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key)) ? name1 + " - " + name2 : name2 + " - " + name1;
                 toTxtFile.append(key + " -> " + names);
                 toTxtFile.append(System.lineSeparator());
             }
