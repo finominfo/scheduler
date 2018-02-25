@@ -41,7 +41,8 @@ public class Main {
                 Iterator<String> iterator = value.iterator();
                 String name1 = iterator.next();
                 String name2 = iterator.next();
-                String names = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key)) ? name1 + " - " + name2 : name2 + " - " + name1;
+                boolean firstFo = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key));
+                String names = firstFo ? name1 + " - " + name2 : name2 + " - " + name1;
                 toTxtFile.append(key + " -> " + names);
                 toTxtFile.append(System.lineSeparator());
             }
