@@ -44,6 +44,9 @@ public class Main {
                 boolean firstFo = Type.isFirstFo(people.getPeople().get(name1).getType(key), people.getPeople().get(name2).getType(key));
                 String names = firstFo ? name1 + " - " + name2 : name2 + " - " + name1;
                 toTxtFile.append(key + " -> " + names);
+                if (scheduler.getHolidays().contains(key)) {
+                    toTxtFile.append(" - Official Holiday");
+                }
                 toTxtFile.append(System.lineSeparator());
             }
         });

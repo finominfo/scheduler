@@ -2,9 +2,12 @@ package hu.finominfo.scheduler.scheduler;
 
 import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.people.Type;
+import hu.finominfo.scheduler.util.*;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Created by kks on 2017.12.18..
@@ -21,6 +24,7 @@ public class Scheduler {
     private final List<Integer> fridays = new ArrayList<>();
     private final List<Integer> saturdays = new ArrayList<>();
     private final List<Integer> sundays = new ArrayList<>();
+    private final List<Integer> holidays = new ArrayList<>();
     private final int numOfDays;
     private final LocalDate localDate;
     List<Type> foAbleTypes = Arrays.asList(Type.FO, Type.FO_AND_BO);
@@ -33,12 +37,19 @@ public class Scheduler {
             hated.put(i, new HashSet<>());
         }
         this.localDate = date.withDayOfMonth(1);
+        int year = date.getYear();
+        Month month = date.getMonth();
+        this.holidays.addAll(HungarianHolidays.getHolidaysForMonth(year, month).stream().map(LocalDate::getDayOfMonth).collect(Collectors.toList()));
         countDays();
         setHated();
         setWanted();
-        setWeekends();
+        setWeekendsAndHolidays();
         setWeekdays();
 
+    }
+
+    public List<Integer> getHolidays() {
+        return holidays;
     }
 
     // --------------------------------------------------------------------------------------------------
@@ -161,19 +172,21 @@ public class Scheduler {
         }
     }
 
-    private void setWeekends() {
-        uniteSaturdaysAndSundays();
-        Map.Entry<Integer, Set<String>> saturdayPersons = getTheMostHatedAndNotScheduledSaturday();
-        while (saturdayPersons.getValue() != null) {
-            int saturday = saturdayPersons.getKey();
-            List<String> orderedPersons = getWeekendOrderedPossibilities(saturday);
-            if (scheduled.get(saturday).isEmpty()) {
-                scheduled.get(saturday).add(orderedPersons.get(0));
+    private void setWeekendsAndHolidays() {
+        //uniteSaturdaysAndSundays();
+        for (List<Integer> days : Arrays.asList(saturdays, sundays, holidays)) {
+            Map.Entry<Integer, Set<String>> dayPersons = getTheMostHatedAndNotScheduled(days);
+            while (dayPersons.getValue() != null) {
+                int day = dayPersons.getKey();
+                List<String> orderedPersons = getWeekendOrderedPossibilities(day);
+                if (scheduled.get(day).isEmpty()) {
+                    scheduled.get(day).add(orderedPersons.get(0));
+                }
+                Person firstPerson = people.get(scheduled.get(day).iterator().next());
+                findFirstGoodFor(firstPerson, orderedPersons, day);
+                //uniteSaturdaysAndSundays();
+                dayPersons = getTheMostHatedAndNotScheduled(days);
             }
-            Person firstPerson = people.get(scheduled.get(saturday).iterator().next());
-            findFirstGoodFor(firstPerson, orderedPersons, saturday);
-            uniteSaturdaysAndSundays();
-            saturdayPersons = getTheMostHatedAndNotScheduledSaturday();
         }
     }
 
@@ -262,13 +275,13 @@ public class Scheduler {
         return new AbstractMap.SimpleEntry<>(position, result2);
     }
 
-    private Map.Entry<Integer, Set<String>> getTheMostHatedAndNotScheduledSaturday() {
+    private Map.Entry<Integer, Set<String>> getTheMostHatedAndNotScheduled(List<Integer> days) {
         int mostHated = -1;
         int position = -1;
         Set<String> result = null;
         Set<String> result2 = null;
         for (int i = 1; i < numOfDays + 1; i++) {
-            if (saturdays.contains(i) && scheduled.get(i).size() < 2) {
+            if (days.contains(i) && scheduled.get(i).size() < 2) {
                 Set<String> dayHated = new HashSet<>();
                 dayHated.addAll(hated.get(i));
                 dayHated.addAll(scheduled.get(i));
@@ -286,6 +299,7 @@ public class Scheduler {
         }
         return new AbstractMap.SimpleEntry<>(position, result2);
     }
+
 
 
     private List<String> getTheFewestScheduledPerson(Map.Entry<Integer, Set<String>> dayPersons) {

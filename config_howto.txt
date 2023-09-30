@@ -1,0 +1,39 @@
+pl.
+
+ZP, h19-28, h2-7, h29
+SP, hmon, hfri
+David, w1
+Jozsi, nofo, h6
+Sanyi, w6-7, h19-21
+Robi, h27
+NTam, nofo, h27
+NZoli, nofo, h27, hend
+Tibi, h20
+
+vasarnapra vagy ket embert allitok be vagy egyet sem,ha beallitok vasarnapra viszont
+szombatra is be kell allitani kulonben ugyanazokat allitja be szombatra is
+
+start.bat-ba irni ha nem a kovetkezo honapot akarod pl ha 2018 febr szeretned igy:
+java -jar scheduler.jar 1802
+pause
+
+start.bat-ba irni ha CSAK a kovetkezo honapot akarod akkor igy nez ki:
+java -jar scheduler.jar
+pause
+
+
+mindig a szombatot kell megadni
+h"szam"            -nem az adott napon
+h"szam-szam"   -nem az adott idoszakban
+w"szam"           -igen az adott napon
+w"szam-szam"  -igen az adott idoszakban
+nofo                 -csak BO
+nofo utan w12, f12 akkor azon a napon fo lesz igy gyakorlhat fo-t
+hend                -nem a hetvegeken
+hmon, htue, hwen, hthu, hfri, hsut,hsun  -nem az adott napokon(het napjai)
++"szam"          - szammal t0bb napra legyen beosztva
+-"szam"          - szammal kevesebb napra legyen beosztva
+b"szam" - azon a napon csak BO szeretne lenni
+f"szam" - azon a napon csak FO szeretne lenni
+b"szam-szam" - ezeken a napokon csak BO szeretne lenni
+f"szam-szam" - azon a napokon csak FO szeretne lenni
