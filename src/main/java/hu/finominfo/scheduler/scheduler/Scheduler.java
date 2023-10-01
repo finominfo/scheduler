@@ -1,13 +1,24 @@
 package hu.finominfo.scheduler.scheduler;
 
-import hu.finominfo.scheduler.people.Person;
-import hu.finominfo.scheduler.people.Type;
-import hu.finominfo.scheduler.util.*;
-
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
-import java.util.stream.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import hu.finominfo.scheduler.people.Person;
+import hu.finominfo.scheduler.people.Type;
+import hu.finominfo.scheduler.util.HungarianHolidays;
 
 /**
  * Created by kks on 2017.12.18..
@@ -52,6 +63,18 @@ public class Scheduler {
 
     public List<Integer> getHolidays() {
         return holidays;
+    }
+
+    public List<Integer> getSaturdays() {
+        return saturdays;
+    }
+
+    public List<Integer> getSundays() {
+        return sundays;
+    }
+
+    public LocalDate getDate() {
+        return localDate;
     }
 
     public int getNumOfDays() {

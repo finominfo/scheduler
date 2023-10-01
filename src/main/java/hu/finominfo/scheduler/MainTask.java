@@ -8,17 +8,25 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -143,24 +151,155 @@ public class MainTask {
             throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Monthly Schedule");
+
         int rowNum = 0;
-        // Create a header row
-        Row headerRow = sheet.createRow(rowNum++);
         int colNum = 0;
+
+        // Create a header row with a different color
+        Row headerRow = sheet.createRow(rowNum++);
+        CellStyle topLeftCellStyle = workbook.createCellStyle();
+        topLeftCellStyle
+                .setFillForegroundColor(IndexedColors.BLACK1.getIndex());
+        topLeftCellStyle.setFillPattern(FillPatternType.DIAMONDS);
+
         Cell cell = headerRow.createCell(colNum++);
+        LocalDate ld = scheduler.getDate();
+        cell.setCellValue(ld.getYear() + " " + ld.getMonth().name());
+        cell.setCellStyle(topLeftCellStyle);
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle
+                .setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        CellStyle headerRedCellStyle = workbook.createCellStyle();
+        headerRedCellStyle
+                .setFillForegroundColor(IndexedColors.RED.getIndex());
+        headerRedCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerRedCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerRedCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        List<Integer> weekendsAndHolidays = new ArrayList<>();
+        weekendsAndHolidays.addAll(scheduler.getSaturdays());
+        weekendsAndHolidays.addAll(scheduler.getSundays());
+        weekendsAndHolidays.addAll(scheduler.getHolidays());
+
+        sheet.setColumnWidth(0, 20 * 256);
         for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
             cell = headerRow.createCell(colNum++);
             cell.setCellValue(i);
+            if (weekendsAndHolidays.contains(i)) {
+                cell.setCellStyle(headerRedCellStyle);
+            } else {
+                cell.setCellStyle(headerCellStyle);
+            }
+            sheet.setColumnWidth(i, 4 * 256);
         }
+
         List<String> names = people.getPeople().values().stream()
                 .map(Person::getName).sorted()
                 .collect(Collectors.toList());
+
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        dataCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        CellStyle dotCellStyle = workbook.createCellStyle();
+        dotCellStyle.setFont(getRedDotFont(workbook));
+        dotCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        dotCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        CellStyle greenStyle = workbook.createCellStyle();
+        greenStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        greenStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        greenStyle.setAlignment(HorizontalAlignment.CENTER);
+        greenStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        for (String name : names) {
+            List<Integer> places = scheduler.getScheduled().entrySet().stream()
+                    .filter(e -> e.getValue().contains(name)).map(Entry::getKey)
+                    .sorted().collect(Collectors.toList());
+            Row row = sheet.createRow(rowNum++);
+            colNum = 0;
+            Cell dateCell = row.createCell(colNum++);
+            dateCell.setCellValue(name);
+            dateCell.setCellStyle(dataCellStyle);
+            for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
+                cell = row.createCell(colNum++);
+                if (places.contains(i)) {
+                    cell.setCellValue("X");
+                    cell.setCellStyle(greenStyle);
+                }
+            }
+        }
+
+        // Write the workbook to a file
+        String fileNameExcel = "schedule-" + localDate.getYear() + "-"
+                + localDate.getMonthValue() + ".xlsx";
+        try (FileOutputStream outputStream = new FileOutputStream(
+                fileNameExcel)) {
+            workbook.write(outputStream);
+        }
+        workbook.close();
+    }
+
+    private Font getRedDotFont(Workbook workbook) {
+        Font font = workbook.createFont();
+        font.setFontName("Arial");
+        font.setColor(IndexedColors.RED.getIndex());
+        font.setBold(true);
+        return font;
+    }
+
+    private void writeMonthToExcel_old(Scheduler scheduler, People people)
+            throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Monthly Schedule");
+        int rowNum = 0;
+        int colNum = 0;
+
+        // Create a header row with a different color
+        Row headerRow = sheet.createRow(rowNum++);
+        CellStyle topLeftCellStyle = workbook.createCellStyle();
+        topLeftCellStyle
+                .setFillForegroundColor(IndexedColors.BLACK1.getIndex());
+        topLeftCellStyle.setFillPattern(FillPatternType.DIAMONDS);
+
+        Cell cell = headerRow.createCell(colNum++);
+        LocalDate ld = scheduler.getDate();
+        cell.setCellValue(ld.getYear() + " " + ld.getMonth().name());
+        cell.setCellStyle(topLeftCellStyle);
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle
+                .setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
+            cell = headerRow.createCell(colNum++);
+            cell.setCellValue(i);
+            cell.setCellStyle(headerCellStyle); // Apply the header cell style
+        }
+
+        List<String> names = people.getPeople().values().stream()
+                .map(Person::getName).sorted()
+                .collect(Collectors.toList());
+
+        // Create a cell style for data rows (if needed)
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        // Set the background color for data cells (e.g., yellow)
+        dataCellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        dataCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         for (String name : names) {
             Row row = sheet.createRow(rowNum++);
             Cell dateCell = row.createCell(0);
             dateCell.setCellValue(name);
+            dateCell.setCellStyle(dataCellStyle); // Apply the data cell style
         }
+
         // Write the workbook to a file
         String fileNameExcel = "schedule-" + localDate.getYear() + "-"
                 + localDate.getMonthValue() + ".xlsx";
