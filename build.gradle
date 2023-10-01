@@ -3,18 +3,18 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 version = '1.0'
 
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'hu.finominfo.scheduler.Main'
-        )
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.4'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
 }
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes 'Main-Class': 'hu.finominfo.scheduler.Main' }
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
