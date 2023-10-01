@@ -5,18 +5,7 @@ import hu.finominfo.scheduler.people.Type;
 import hu.finominfo.scheduler.util.HungarianHolidays;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -153,6 +142,9 @@ public class Scheduler {
           possibleNames.addAll(people.keySet());
           possibleNames.removeAll(set);
           scheduled.get(entry.getKey()).addAll(possibleNames);
+          if (scheduled.get(entry.getKey()).size() == 2) {
+            foNames.put(entry.getKey(), selectFo(scheduled.get(entry.getKey()), entry.getKey()));
+          }
           System.out.println(
             possibleNames
               .stream()
@@ -166,6 +158,21 @@ public class Scheduler {
       });
   }
 
+
+  private String selectFo(Set<String> names, int day) {
+    Iterator<String> iterator = names.iterator();
+    String name1 = iterator.next();
+    String name2 = iterator.next();
+    long count1 = foNames.values().stream().filter(name -> name.equals(name1)).count();
+    long count2 = foNames.values().stream().filter(name -> name.equals(name2)).count();
+    if (people.values().stream().filter(p -> p.getName().equals(name1)).filter(p2 -> p2.getType(day).equals(Type.BO)).findAny().orElse(null) != null) {
+      return name2;
+    }
+    if (people.values().stream().filter(p -> p.getName().equals(name2)).filter(p2 -> p2.getType(day).equals(Type.BO)).findAny().orElse(null) != null) {
+      return name1;
+    }
+    return count1 < count2 ? name1 : name2;
+  }
   // --------------------------------------------------------------------------------------------------
 
   private void setWanted() {
@@ -210,6 +217,7 @@ public class Scheduler {
                     .reduce("", String::concat)
                 );
               }
+              foNames.put(wantedDay, selectFo(set, wantedDay));
             }
             if (set.size() > 2) {
               throw new RuntimeException(
@@ -296,6 +304,9 @@ public class Scheduler {
         }
         Person firstPerson = people.get(scheduled.get(day).iterator().next());
         findFirstGoodFor(firstPerson, orderedPersons, day);
+        if (scheduled.get(day).size() == 2) {
+          foNames.put(day, selectFo(scheduled.get(day), day));
+        }
         // uniteSaturdaysAndSundays();
         dayPersons = getTheMostHatedAndNotScheduled(days);
       }
@@ -377,6 +388,9 @@ public class Scheduler {
       }
       Person firstPerson = people.get(scheduled.get(day).iterator().next());
       findFirstGoodFor(firstPerson, orderedPersons, day);
+      if (scheduled.get(day).size() == 2) {
+        foNames.put(day, selectFo(scheduled.get(day), day));
+      }
       dayPersons = getTheMostHatedAndNotScheduledDay();
     }
   }
@@ -525,4 +539,9 @@ public class Scheduler {
   public Map<Integer, Set<String>> getScheduled() {
     return scheduled;
   }
+
+  public Map<Integer, String> getFoNames() {
+    return foNames;
+  }
+
 }
