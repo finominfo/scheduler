@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +23,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import hu.finominfo.scheduler.people.People;
+import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.people.Type;
 import hu.finominfo.scheduler.scheduler.Scheduler;
 
@@ -29,6 +31,7 @@ public class MainTask {
 
     private final String[] args;
     private volatile LocalDate localDate;
+    private List<String> collect;
 
     public MainTask(String[] args) {
         this.args = args;
@@ -145,28 +148,18 @@ public class MainTask {
         Row headerRow = sheet.createRow(rowNum++);
         int colNum = 0;
         Cell cell = headerRow.createCell(colNum++);
-        for (Map.Entry<Integer, Set<String>> entry : scheduler.getScheduled()
-                .entrySet()) {
+        for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
             cell = headerRow.createCell(colNum++);
-            cell.setCellValue(entry.getKey());
+            cell.setCellValue(i);
         }
-        for (Map.Entry<Integer, Set<String>> entry : scheduler.getScheduled()
-                .entrySet()) {
-            if (entry.getValue().size() == 2) {
-                Iterator<String> iterator = entry.getValue().iterator();
-                String name1 = iterator.next();
-                String name2 = iterator.next();
-                boolean firstFo = Type.isFirstFo(
-                        people.getPeople().get(name1).getType(entry.getKey()),
-                        people.getPeople().get(name2).getType(entry.getKey()));
-                String names = firstFo ? name1 + " - " + name2
-                        : name2 + " - " + name1;
+        List<String> names = people.getPeople().values().stream()
+                .map(Person::getName).sorted()
+                .collect(Collectors.toList());
 
-                // Create a new row for each entry
-                Row row = sheet.createRow(rowNum++);
-                Cell dateCell = row.createCell(0);
-                dateCell.setCellValue(names);
-            }
+        for (String name : names) {
+            Row row = sheet.createRow(rowNum++);
+            Cell dateCell = row.createCell(0);
+            dateCell.setCellValue(name);
         }
         // Write the workbook to a file
         String fileNameExcel = "schedule-" + localDate.getYear() + "-"
