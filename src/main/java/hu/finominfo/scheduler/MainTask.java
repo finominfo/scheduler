@@ -156,36 +156,23 @@ public class MainTask {
 
         // Create a header row with a different color
         Row headerRow = sheet.createRow(rowNum++);
-        CellStyle topLeftCellStyle = workbook.createCellStyle();
-        topLeftCellStyle
-                .setFillForegroundColor(IndexedColors.BLACK1.getIndex());
-        topLeftCellStyle.setFillPattern(FillPatternType.DIAMONDS);
-
-        CellStyle lightGreyStyle = workbook.createCellStyle();
-        lightGreyStyle.setFillForegroundColor(
-                IndexedColors.GREY_25_PERCENT.getIndex());
-        lightGreyStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        lightGreyStyle.setAlignment(HorizontalAlignment.CENTER);
-        lightGreyStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle topLeftCellStyle = getCellStyle(workbook,
+                IndexedColors.BLACK1.getIndex(), FillPatternType.DIAMONDS);
+        CellStyle lightGreyStyle = getCellStyle(workbook,
+                IndexedColors.GREY_25_PERCENT);
+        CellStyle headerCellStyle = getCellStyle(workbook,
+                IndexedColors.LIGHT_BLUE);
+        CellStyle headerRedCellStyle = getCellStyle(workbook,
+                IndexedColors.ORANGE);
+        CellStyle dataCellStyle = getCellStyle(workbook,
+                IndexedColors.YELLOW);
+        CellStyle greenStyle = getCellStyle(workbook,
+                IndexedColors.LIGHT_GREEN);
 
         Cell cell = headerRow.createCell(colNum++);
         LocalDate ld = scheduler.getDate();
         cell.setCellValue(ld.getYear() + " " + ld.getMonth().name());
         cell.setCellStyle(topLeftCellStyle);
-
-        CellStyle headerCellStyle = workbook.createCellStyle();
-        headerCellStyle
-                .setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-        headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
-        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        CellStyle headerRedCellStyle = workbook.createCellStyle();
-        headerRedCellStyle
-                .setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-        headerRedCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        headerRedCellStyle.setAlignment(HorizontalAlignment.CENTER);
-        headerRedCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         List<Integer> weekendsAndHolidays = new ArrayList<>();
         weekendsAndHolidays.addAll(scheduler.getSaturdays());
@@ -207,16 +194,6 @@ public class MainTask {
         List<String> names = people.getPeople().values().stream()
                 .map(Person::getName).sorted()
                 .collect(Collectors.toList());
-
-        CellStyle dataCellStyle = workbook.createCellStyle();
-        dataCellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-        dataCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        CellStyle greenStyle = workbook.createCellStyle();
-        greenStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-        greenStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        greenStyle.setAlignment(HorizontalAlignment.CENTER);
-        greenStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         Row row = sheet.createRow(rowNum++);
         colNum = 0;
@@ -252,7 +229,6 @@ public class MainTask {
             }
         }
 
-        // Write the workbook to a file
         String fileNameExcel = "schedule-" + localDate.getYear() + "-"
                 + localDate.getMonthValue() + ".xlsx";
         try (FileOutputStream outputStream = new FileOutputStream(
@@ -260,6 +236,23 @@ public class MainTask {
             workbook.write(outputStream);
         }
         workbook.close();
+    }
+
+    private CellStyle getCellStyle(Workbook workbook,
+            IndexedColors indexedColors) {
+        return getCellStyle(workbook, indexedColors.getIndex(),
+                FillPatternType.SOLID_FOREGROUND);
+    }
+
+    private CellStyle getCellStyle(Workbook workbook, short indexedColor,
+            FillPatternType fillPatternType) {
+        CellStyle style = workbook.createCellStyle();
+        style.setFillForegroundColor(indexedColor);
+        style.setFillPattern(fillPatternType);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        return style;
+
     }
 
 }
