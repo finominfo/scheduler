@@ -5,6 +5,7 @@ import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HungarianHolidays {
 
@@ -48,7 +49,7 @@ public class HungarianHolidays {
         // Filter the holidays for the given month
         return holidays.stream()
                 .filter(date -> date.getMonth() == month)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Calculate the date of Easter Sunday using Zeller's Congruence
