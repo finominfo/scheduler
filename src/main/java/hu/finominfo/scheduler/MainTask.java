@@ -45,8 +45,8 @@ public class MainTask {
 
         People people = new People();
         Scheduler scheduler = new Scheduler(people.getPeople(), localDate);
-        reportMonth(scheduler, people);
-        reportMonthToExcel(scheduler, people);
+        writeMonth(scheduler, people);
+        writeMonthToExcel(scheduler, people);
 
 
 
@@ -86,7 +86,7 @@ public class MainTask {
     }
 
 
-    private void reportMonth(Scheduler scheduler, People people) throws IOException {
+    private void writeMonth(Scheduler scheduler, People people) throws IOException {
         final StringBuilder toTxtFile = new StringBuilder();
         scheduler.getScheduled().forEach((key, value) -> {
             if (value.size() == 2) {
@@ -124,7 +124,7 @@ public class MainTask {
     
 
 
-    private void reportMonthToExcel(Scheduler scheduler, People people) throws IOException {
+    private void writeMonthToExcel(Scheduler scheduler, People people) throws IOException {
         // Create a new workbook and sheet
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Monthly Schedule");
