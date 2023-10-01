@@ -7,14 +7,17 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     //"[java]": {
+    //    "editor.defaultFormatter": "mwpb.java-prettier-formatter"
+    //},
+    //"[java]": {
     //    "editor.defaultFormatter": "ilkka.google-java-format",
     //},
-    "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": "\\.java$",
-                "cmd": "google-java-format --replace ${file}"
-            },
-        ],
-    },
+    //"emeraldwalk.runonsave": {
+    //    "commands": [
+    //        {
+    //            "match": "\\.java$",
+    //            "cmd": "google-java-format --replace ${file}"
+    //        },
+    //    ],
+    //},
 }
