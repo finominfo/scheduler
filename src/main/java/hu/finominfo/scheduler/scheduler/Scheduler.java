@@ -8,12 +8,8 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created by kks on 2017.12.18..
- */
 public class Scheduler {
 
-  private final Random random = new Random();
   private final Map<String, Person> people;
   private final Map<Integer, String> foNames = new HashMap<>();
   private final Map<Integer, Set<String>> scheduled = new HashMap<>();
@@ -42,11 +38,10 @@ public class Scheduler {
     Month month = date.getMonth();
     this.holidays.addAll(
         HungarianHolidays
-          .getHolidaysForMonth(year, month)
-          .stream()
-          .map(LocalDate::getDayOfMonth)
-          .collect(Collectors.toList())
-      );
+            .getHolidaysForMonth(year, month)
+            .stream()
+            .map(LocalDate::getDayOfMonth)
+            .collect(Collectors.toList()));
     countDays();
     setHated();
     setWanted();
@@ -78,86 +73,76 @@ public class Scheduler {
 
   private void setHated() {
     people
-      .entrySet()
-      .stream()
-      .forEach(entry -> {
-        Person person = entry.getValue();
-        if (person.isHatesMondays()) mondays.forEach(day ->
-          person.getHatedDays().add(day)
-        );
-        if (person.isHatesTuesdays()) tuesdays.forEach(day ->
-          person.getHatedDays().add(day)
-        );
-        if (person.isHatesWednesdays()) wednesdays.forEach(day ->
-          person.getHatedDays().add(day)
-        );
-        if (person.isHatesThursdays()) thursdays.forEach(day ->
-          person.getHatedDays().add(day)
-        );
-        if (person.isHatesFridays()) fridays.forEach(day ->
-          person.getHatedDays().add(day)
-        );
-        if (person.isHatesWeekends()) {
-          saturdays.forEach(day -> person.getHatedDays().add(day));
-          sundays.forEach(day -> person.getHatedDays().add(day));
-        }
-        if (person.isHatesWeekdays()) {
-          mondays.forEach(day -> person.getHatedDays().add(day));
-          tuesdays.forEach(day -> person.getHatedDays().add(day));
-          wednesdays.forEach(day -> person.getHatedDays().add(day));
-          thursdays.forEach(day -> person.getHatedDays().add(day));
-          fridays.forEach(day -> person.getHatedDays().add(day));
-        }
-      });
+        .entrySet()
+        .stream()
+        .forEach(entry -> {
+          Person person = entry.getValue();
+          if (person.isHatesMondays())
+            mondays.forEach(day -> person.getHatedDays().add(day));
+          if (person.isHatesTuesdays())
+            tuesdays.forEach(day -> person.getHatedDays().add(day));
+          if (person.isHatesWednesdays())
+            wednesdays.forEach(day -> person.getHatedDays().add(day));
+          if (person.isHatesThursdays())
+            thursdays.forEach(day -> person.getHatedDays().add(day));
+          if (person.isHatesFridays())
+            fridays.forEach(day -> person.getHatedDays().add(day));
+          if (person.isHatesWeekends()) {
+            saturdays.forEach(day -> person.getHatedDays().add(day));
+            sundays.forEach(day -> person.getHatedDays().add(day));
+          }
+          if (person.isHatesWeekdays()) {
+            mondays.forEach(day -> person.getHatedDays().add(day));
+            tuesdays.forEach(day -> person.getHatedDays().add(day));
+            wednesdays.forEach(day -> person.getHatedDays().add(day));
+            thursdays.forEach(day -> person.getHatedDays().add(day));
+            fridays.forEach(day -> person.getHatedDays().add(day));
+          }
+        });
 
     people
-      .entrySet()
-      .stream()
-      .forEach(entry ->
-        entry
-          .getValue()
-          .getHatedDays()
-          .forEach(hatedDay -> {
-            Set<String> set = hated.get(hatedDay);
-            set.add(entry.getKey());
-            if (set.size() > people.size() - 2) {
-              throw new RuntimeException(
-                "Too much people hate the same day: " +
-                set
-                  .stream()
-                  .map(e -> e.toString() + " ")
-                  .reduce("", String::concat)
-              );
-            }
-          })
-      );
+        .entrySet()
+        .stream()
+        .forEach(entry -> entry
+            .getValue()
+            .getHatedDays()
+            .forEach(hatedDay -> {
+              Set<String> set = hated.get(hatedDay);
+              set.add(entry.getKey());
+              if (set.size() > people.size() - 2) {
+                throw new RuntimeException(
+                    "Too much people hate the same day: " +
+                        set
+                            .stream()
+                            .map(e -> e.toString() + " ")
+                            .reduce("", String::concat));
+              }
+            }));
     hated
-      .entrySet()
-      .stream()
-      .forEach(entry -> {
-        Set<String> set = entry.getValue();
-        if (set.size() == people.size() - 2) { // Only 2 person remain for
-          // that day
-          final Set<String> possibleNames = new HashSet<>();
-          possibleNames.addAll(people.keySet());
-          possibleNames.removeAll(set);
-          scheduled.get(entry.getKey()).addAll(possibleNames);
-          if (scheduled.get(entry.getKey()).size() == 2) {
-            foNames.put(entry.getKey(), selectFo(scheduled.get(entry.getKey()), entry.getKey()));
+        .entrySet()
+        .stream()
+        .forEach(entry -> {
+          Set<String> set = entry.getValue();
+          if (set.size() == people.size() - 2) { // Only 2 person remain for
+            // that day
+            final Set<String> possibleNames = new HashSet<>();
+            possibleNames.addAll(people.keySet());
+            possibleNames.removeAll(set);
+            scheduled.get(entry.getKey()).addAll(possibleNames);
+            if (scheduled.get(entry.getKey()).size() == 2) {
+              foNames.put(entry.getKey(), selectFo(scheduled.get(entry.getKey()), entry.getKey()));
+            }
+            System.out.println(
+                possibleNames
+                    .stream()
+                    .map(e -> e.toString() + " ")
+                    .reduce("", String::concat) +
+                    " were added to " +
+                    entry.getKey() +
+                    ", because everybody else hate that day.");
           }
-          System.out.println(
-            possibleNames
-              .stream()
-              .map(e -> e.toString() + " ")
-              .reduce("", String::concat) +
-            " were added to " +
-            entry.getKey() +
-            ", because everybody else hate that day."
-          );
-        }
-      });
+        });
   }
-
 
   private String selectFo(Set<String> names, int day) {
     Iterator<String> iterator = names.iterator();
@@ -165,10 +150,12 @@ public class Scheduler {
     String name2 = iterator.next();
     long count1 = foNames.values().stream().filter(name -> name.equals(name1)).count();
     long count2 = foNames.values().stream().filter(name -> name.equals(name2)).count();
-    if (people.values().stream().filter(p -> p.getName().equals(name1)).filter(p2 -> p2.getType(day).equals(Type.BO)).findAny().orElse(null) != null) {
+    if (people.values().stream().filter(p -> p.getName().equals(name1)).filter(p2 -> p2.getType(day).equals(Type.BO))
+        .findAny().orElse(null) != null) {
       return name2;
     }
-    if (people.values().stream().filter(p -> p.getName().equals(name2)).filter(p2 -> p2.getType(day).equals(Type.BO)).findAny().orElse(null) != null) {
+    if (people.values().stream().filter(p -> p.getName().equals(name2)).filter(p2 -> p2.getType(day).equals(Type.BO))
+        .findAny().orElse(null) != null) {
       return name1;
     }
     return count1 < count2 ? name1 : name2;
@@ -177,59 +164,46 @@ public class Scheduler {
 
   private void setWanted() {
     people
-      .entrySet()
-      .stream()
-      .forEach(entry ->
-        entry
-          .getValue()
-          .getWantedDays()
-          .forEach(wantedDay -> {
-            Set<String> set = scheduled.get(wantedDay);
-            set.add(entry.getKey());
-            if (set.size() == 2) {
-              if (
-                set
-                  .stream()
-                  .allMatch(name ->
-                    people.get(name).getType(wantedDay).equals(Type.BO)
-                  )
-              ) {
-                throw new RuntimeException(
-                  "Two BO people want the same day: " +
-                  set
+        .entrySet()
+        .stream()
+        .forEach(entry -> entry
+            .getValue()
+            .getWantedDays()
+            .forEach(wantedDay -> {
+              Set<String> set = scheduled.get(wantedDay);
+              set.add(entry.getKey());
+              if (set.size() == 2) {
+                if (set
                     .stream()
-                    .map(e -> e.toString() + " ")
-                    .reduce("", String::concat)
-                );
-              }
-              if (
-                set
-                  .stream()
-                  .allMatch(name ->
-                    people.get(name).getType(wantedDay).equals(Type.FO)
-                  )
-              ) {
-                throw new RuntimeException(
-                  "Two FO people want the same day: " +
-                  set
+                    .allMatch(name -> people.get(name).getType(wantedDay).equals(Type.BO))) {
+                  throw new RuntimeException(
+                      "Two BO people want the same day: " +
+                          set
+                              .stream()
+                              .map(e -> e.toString() + " ")
+                              .reduce("", String::concat));
+                }
+                if (set
                     .stream()
-                    .map(e -> e.toString() + " ")
-                    .reduce("", String::concat)
-                );
+                    .allMatch(name -> people.get(name).getType(wantedDay).equals(Type.FO))) {
+                  throw new RuntimeException(
+                      "Two FO people want the same day: " +
+                          set
+                              .stream()
+                              .map(e -> e.toString() + " ")
+                              .reduce("", String::concat));
+                }
+                foNames.put(wantedDay, selectFo(set, wantedDay));
               }
-              foNames.put(wantedDay, selectFo(set, wantedDay));
-            }
-            if (set.size() > 2) {
-              throw new RuntimeException(
-                "More than two people want the same day: " +
-                set
-                  .stream()
-                  .map(e -> e.toString() + " ")
-                  .reduce("", String::concat)
-              );
-            }
-          })
-      );
+              if (set.size() > 2) {
+                throw new RuntimeException(
+                    "More than two people want the same day: " +
+                        set
+                            .stream()
+                            .map(e -> e.toString() + " ")
+                            .reduce("", String::concat));
+              }
+            }));
   }
 
   // --------------------------------------------------------------------------------------------------
@@ -264,38 +238,11 @@ public class Scheduler {
     }
   }
 
-  private void uniteSaturdaysAndSundays() {
-    for (int i = 0; i < saturdays.size(); i++) {
-      int saturdayNumber = saturdays.get(i);
-      Set<String> saturday = scheduled.get(saturdayNumber);
-      Set<String> sunday = scheduled.get(saturdayNumber + 1);
-      Set<String> sum = new HashSet<>();
-      sum.addAll(saturday);
-      sum.addAll(sunday);
-      if (sum.size() <= 2) {
-        saturday.addAll(sunday);
-        sunday.addAll(saturday);
-        if (saturday.size() > 2) {
-          throw new RuntimeException(
-            "More than two people want the " +
-            (i + 1) +
-            ". weekend: " +
-            saturday
-              .stream()
-              .map(e -> e.toString() + " ")
-              .reduce("", String::concat)
-          );
-        }
-      }
-    }
-  }
-
   private void setWeekendsAndHolidays() {
     // uniteSaturdaysAndSundays();
     for (List<Integer> days : Arrays.asList(saturdays, sundays, holidays)) {
       Map.Entry<Integer, Set<String>> dayPersons = getTheMostHatedAndNotScheduled(
-        days
-      );
+          days);
       while (dayPersons.getValue() != null) {
         int day = dayPersons.getKey();
         List<String> orderedPersons = getWeekendOrderedPossibilities(day);
@@ -318,43 +265,33 @@ public class Scheduler {
     final Map<String, Integer> scheduleNumbers = new HashMap<>();
     persons.stream().forEach(name -> scheduleNumbers.put(name, 0));
     scheduled
-      .entrySet()
-      .stream()
-      .forEach(entry ->
-        entry
-          .getValue()
-          .stream()
-          .forEach(name -> {
-            if (persons.contains(name)) {
-              scheduleNumbers.put(name, scheduleNumbers.get(name) + 14);
-              if (
-                scheduled.get(saturdayNumber - 2).contains(name) ||
-                scheduled.get(saturdayNumber + 3).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 4);
-              }
-              if (
-                scheduled.get(saturdayNumber - 3).contains(name) ||
-                scheduled.get(saturdayNumber + 4).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
-              }
-              if (
-                scheduled.get(saturdayNumber - 7).contains(name) ||
-                scheduled.get(saturdayNumber + 7).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
-              }
+        .entrySet()
+        .stream()
+        .forEach(entry -> entry
+            .getValue()
+            .stream()
+            .forEach(name -> {
+              if (persons.contains(name)) {
+                scheduleNumbers.put(name, scheduleNumbers.get(name) + 14);
+                if (scheduled.get(saturdayNumber - 2).contains(name) ||
+                    scheduled.get(saturdayNumber + 3).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 4);
+                }
+                if (scheduled.get(saturdayNumber - 3).contains(name) ||
+                    scheduled.get(saturdayNumber + 4).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
+                }
+                if (scheduled.get(saturdayNumber - 7).contains(name) ||
+                    scheduled.get(saturdayNumber + 7).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
+                }
 
-              if (
-                scheduled.get(saturdayNumber - 6).contains(name) ||
-                scheduled.get(saturdayNumber + 8).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
+                if (scheduled.get(saturdayNumber - 6).contains(name) ||
+                    scheduled.get(saturdayNumber + 8).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 1000);
+                }
               }
-            }
-          })
-      );
+            }));
     return orderScheduleNumbers(scheduleNumbers);
   }
 
@@ -421,8 +358,7 @@ public class Scheduler {
   }
 
   private Map.Entry<Integer, Set<String>> getTheMostHatedAndNotScheduled(
-    List<Integer> days
-  ) {
+      List<Integer> days) {
     int mostHated = -1;
     int position = -1;
     Set<String> result = null;
@@ -448,59 +384,47 @@ public class Scheduler {
   }
 
   private List<String> getTheFewestScheduledPerson(
-    Map.Entry<Integer, Set<String>> dayPersons
-  ) {
+      Map.Entry<Integer, Set<String>> dayPersons) {
     int day = dayPersons.getKey();
     Set<String> persons = dayPersons.getValue();
     final Map<String, Integer> scheduleNumbers = new HashMap<>();
     persons.stream().forEach(name -> scheduleNumbers.put(name, 0));
     scheduled
-      .entrySet()
-      .stream()
-      .forEach(entry ->
-        entry
-          .getValue()
-          .stream()
-          .forEach(name -> {
-            if (persons.contains(name)) {
-              scheduleNumbers.put(name, scheduleNumbers.get(name) + 7);
-              if (
-                scheduled.get(day - 2).contains(name) ||
-                scheduled.get(day + 2).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
+        .entrySet()
+        .stream()
+        .forEach(entry -> entry
+            .getValue()
+            .stream()
+            .forEach(name -> {
+              if (persons.contains(name)) {
+                scheduleNumbers.put(name, scheduleNumbers.get(name) + 7);
+                if (scheduled.get(day - 2).contains(name) ||
+                    scheduled.get(day + 2).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 2);
+                }
+                if (scheduled.get(day - 3).contains(name) ||
+                    scheduled.get(day + 3).contains(name)) {
+                  scheduleNumbers.put(name, scheduleNumbers.get(name) + 1);
+                }
               }
-              if (
-                scheduled.get(day - 3).contains(name) ||
-                scheduled.get(day + 3).contains(name)
-              ) {
-                scheduleNumbers.put(name, scheduleNumbers.get(name) + 1);
-              }
-            }
-          })
-      );
+            }));
     scheduleNumbers
-      .entrySet()
-      .stream()
-      .forEach(entry ->
-        scheduleNumbers.put(
-          entry.getKey(),
-          entry.getValue() -
-          (people.get(entry.getKey()).getManualDayDifference().get() * 7)
-        )
-      );
+        .entrySet()
+        .stream()
+        .forEach(entry -> scheduleNumbers.put(
+            entry.getKey(),
+            entry.getValue() -
+                (people.get(entry.getKey()).getManualDayDifference().get() * 7)));
     return orderScheduleNumbers(scheduleNumbers);
   }
 
   private List<String> orderScheduleNumbers(
-    Map<String, Integer> scheduleNumbers
-  ) {
+      Map<String, Integer> scheduleNumbers) {
     final List<String> retVal = new ArrayList<>();
     while (!scheduleNumbers.isEmpty()) {
       Map.Entry<String, Integer> min = Collections.min(
-        scheduleNumbers.entrySet(),
-        Comparator.comparingInt(Map.Entry::getValue)
-      );
+          scheduleNumbers.entrySet(),
+          Comparator.comparingInt(Map.Entry::getValue));
       retVal.add(min.getKey());
       scheduleNumbers.remove(min.getKey());
     }
@@ -508,29 +432,25 @@ public class Scheduler {
   }
 
   private void findFirstGoodFor(
-    final Person person,
-    final List<String> orderedPersons,
-    final int day
-  ) {
+      final Person person,
+      final List<String> orderedPersons,
+      final int day) {
     Optional<String> first = orderedPersons
-      .stream()
-      .filter(name ->
-        !people.get(name).equals(person) &&
-        people.get(name).getType(day).goodWith(person.getType(day))
-      )
-      .findFirst();
+        .stream()
+        .filter(name -> !people.get(name).equals(person) &&
+            people.get(name).getType(day).goodWith(person.getType(day)))
+        .findFirst();
     if (first.isPresent()) {
       scheduled.get(day).add(first.get());
     } else {
       throw new RuntimeException(
-        "There is no suitable people for " +
-        day +
-        ". " +
-        orderedPersons
-          .stream()
-          .map(e -> e.toString() + " ")
-          .reduce("", String::concat)
-      );
+          "There is no suitable people for " +
+              day +
+              ". " +
+              orderedPersons
+                  .stream()
+                  .map(e -> e.toString() + " ")
+                  .reduce("", String::concat));
     }
   }
 

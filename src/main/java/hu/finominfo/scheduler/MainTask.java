@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -39,8 +38,6 @@ public class MainTask {
 
     private final String[] args;
     private volatile LocalDate localDate;
-    private List<String> collect;
-    private Set<String> set;
 
     public MainTask(String[] args) {
         this.args = args;
@@ -49,12 +46,10 @@ public class MainTask {
     public void make() throws IOException {
         if (args != null && args.length == 1) {
             System.out.println(args[0]);
-            localDate =
-                    LocalDate.of(
-                            2000 + Integer.valueOf(args[0].substring(0, 2)),
-                            Integer.valueOf(args[0].substring(2)),
-                            1
-                    );
+            localDate = LocalDate.of(
+                    2000 + Integer.valueOf(args[0].substring(0, 2)),
+                    Integer.valueOf(args[0].substring(2)),
+                    1);
         } else {
             localDate = LocalDateTime.now().toLocalDate().plusMonths(1);
         }
@@ -67,12 +62,11 @@ public class MainTask {
         Map<String, AtomicInteger> allScheduledAmount = new HashMap<>();
         LocalDate previousDate = localDate;
         while (previousDate.getYear() == localDate.getYear()) {
-            String fileName2 =
-                    "schedule-" +
-                            previousDate.getYear() +
-                            "-" +
-                            previousDate.getMonthValue() +
-                            ".csv";
+            String fileName2 = "schedule-" +
+                    previousDate.getYear() +
+                    "-" +
+                    previousDate.getMonthValue() +
+                    ".csv";
             File file = new File(fileName2);
             if (file.exists() && !file.isDirectory()) {
                 String content = new String(Files.readAllBytes(Paths.get(fileName2)));
@@ -108,8 +102,7 @@ public class MainTask {
         Files.write(
                 Paths.get(fileName3),
                 toFile3.toString().getBytes("UTF-8"),
-                StandardOpenOption.CREATE
-        );
+                StandardOpenOption.CREATE);
     }
 
     private void writeMonth(Scheduler scheduler, People people)
@@ -124,8 +117,7 @@ public class MainTask {
                         String name2 = iterator.next();
                         boolean firstFo = Type.isFirstFo(
                                 people.getPeople().get(name1).getType(key),
-                                people.getPeople().get(name2).getType(key)
-                        );
+                                people.getPeople().get(name2).getType(key));
                         String names = firstFo
                                 ? name1 + " - " + name2
                                 : name2 + " - " + name1;
@@ -140,23 +132,20 @@ public class MainTask {
                 .getScheduled()
                 .entrySet()
                 .stream()
-                .forEach(entry ->
-                        entry
-                                .getValue()
-                                .stream()
-                                .forEach(name -> {
-                                    people.getPeople().get(name).getNumOfScheduled().incrementAndGet();
-                                    people.getPeople().get(name).getWantedDays().add(entry.getKey());
-                                })
-                );
+                .forEach(entry -> entry
+                        .getValue()
+                        .stream()
+                        .forEach(name -> {
+                            people.getPeople().get(name).getNumOfScheduled().incrementAndGet();
+                            people.getPeople().get(name).getWantedDays().add(entry.getKey());
+                        }));
         final StringBuilder toFile = new StringBuilder();
         people
                 .getPeople()
                 .entrySet()
                 .forEach(entry -> {
                     toTxtFile.append(
-                            entry.getKey() + " - " + entry.getValue().getNumOfScheduled().get()
-                    );
+                            entry.getKey() + " - " + entry.getValue().getNumOfScheduled().get());
                     toTxtFile.append(System.lineSeparator());
                     toFile.append(entry.getKey());
                     entry
@@ -166,28 +155,24 @@ public class MainTask {
                     toFile.append(System.lineSeparator());
                 });
         toTxtFile.append(toFile);
-        String fileNameTxt =
-                "schedule-" +
-                        localDate.getYear() +
-                        "-" +
-                        localDate.getMonthValue() +
-                        ".txt";
+        String fileNameTxt = "schedule-" +
+                localDate.getYear() +
+                "-" +
+                localDate.getMonthValue() +
+                ".txt";
         Files.write(
                 Paths.get(fileNameTxt),
                 toTxtFile.toString().getBytes("UTF-8"),
-                StandardOpenOption.CREATE
-        );
-        String fileName =
-                "schedule-" +
-                        localDate.getYear() +
-                        "-" +
-                        localDate.getMonthValue() +
-                        ".csv";
+                StandardOpenOption.CREATE);
+        String fileName = "schedule-" +
+                localDate.getYear() +
+                "-" +
+                localDate.getMonthValue() +
+                ".csv";
         Files.write(
                 Paths.get(fileName),
                 toFile.toString().getBytes("UTF-8"),
-                StandardOpenOption.CREATE
-        );
+                StandardOpenOption.CREATE);
     }
 
     private void writeMonthToExcel(Scheduler scheduler, People people)
@@ -203,16 +188,13 @@ public class MainTask {
         CellStyle topLeftCellStyle = getCellStyle(
                 workbook,
                 IndexedColors.BLACK1.getIndex(),
-                FillPatternType.DIAMONDS
-        );
+                FillPatternType.DIAMONDS);
         CellStyle lightGreyStyle = getCellStyle(
                 workbook,
-                IndexedColors.GREY_25_PERCENT
-        );
+                IndexedColors.GREY_25_PERCENT);
         CellStyle headerCellStyle = getCellStyle(
                 workbook,
-                IndexedColors.LIGHT_BLUE
-        );
+                IndexedColors.LIGHT_BLUE);
         CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
         CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.YELLOW);
         CellStyle greenStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
@@ -258,11 +240,9 @@ public class MainTask {
                             .getDayOfWeek()
                             .name()
                             .toUpperCase()
-                            .substring(0, 3)
-            );
+                            .substring(0, 3));
             dateCell.setCellStyle(
-                    weekendsAndHolidays.contains(i) ? headerRedCellStyle : lightGreyStyle
-            );
+                    weekendsAndHolidays.contains(i) ? headerRedCellStyle : lightGreyStyle);
         }
 
         for (String name : names) {
@@ -289,20 +269,18 @@ public class MainTask {
                         cell.setCellValue(foName.equals(name) ? "IMS1" : "IMS2");
                     }
                     cell.setCellStyle(
-                            weekendsAndHolidays.contains(i) ? headerRedCellStyle : greenStyle
-                    );
+                            weekendsAndHolidays.contains(i) ? headerRedCellStyle : greenStyle);
                 } else if (weekendsAndHolidays.contains(i)) {
                     cell.setCellStyle(headerRedCellStyle);
                 }
             }
         }
 
-        String fileNameExcel =
-                "schedule-" +
-                        localDate.getYear() +
-                        "-" +
-                        localDate.getMonthValue() +
-                        ".xlsx";
+        String fileNameExcel = "schedule-" +
+                localDate.getYear() +
+                "-" +
+                localDate.getMonthValue() +
+                ".xlsx";
         try (FileOutputStream outputStream = new FileOutputStream(fileNameExcel)) {
             workbook.write(outputStream);
         }
@@ -311,20 +289,17 @@ public class MainTask {
 
     private CellStyle getCellStyle(
             Workbook workbook,
-            IndexedColors indexedColors
-    ) {
+            IndexedColors indexedColors) {
         return getCellStyle(
                 workbook,
                 indexedColors.getIndex(),
-                FillPatternType.SOLID_FOREGROUND
-        );
+                FillPatternType.SOLID_FOREGROUND);
     }
 
     private CellStyle getCellStyle(
             Workbook workbook,
             short indexedColor,
-            FillPatternType fillPatternType
-    ) {
+            FillPatternType fillPatternType) {
         CellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(indexedColor);
         style.setFillPattern(fillPatternType);
