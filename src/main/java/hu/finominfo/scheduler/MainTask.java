@@ -254,6 +254,7 @@ public class MainTask {
                     .map(Entry::getKey)
                     .sorted()
                     .collect(Collectors.toList());
+            List<Integer> hatedDays = people.getPeople().get(name).getHatedDays();
             row = sheet.createRow(rowNum++);
             colNum = 0;
             dateCell = row.createCell(colNum++);
@@ -270,9 +271,14 @@ public class MainTask {
                     }
                     cell.setCellStyle(
                             weekendsAndHolidays.contains(i) ? headerRedCellStyle : greenStyle);
+                } else if (hatedDays.contains(i)) {
+                    cell.setCellValue("X");
+                    cell.setCellStyle(
+                            weekendsAndHolidays.contains(i) ? headerRedCellStyle : lightGreyStyle);
                 } else if (weekendsAndHolidays.contains(i)) {
                     cell.setCellStyle(headerRedCellStyle);
                 }
+
             }
         }
 
