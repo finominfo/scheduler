@@ -148,17 +148,19 @@ public class Scheduler {
     Iterator<String> iterator = names.iterator();
     String name1 = iterator.next();
     String name2 = iterator.next();
+    long countAll1 = scheduled.values().stream().filter(s -> s.contains(name1)).count();
+    long countAll2 = scheduled.values().stream().filter(s -> s.contains(name2)).count();
     long count1 = foNames.values().stream().filter(name -> name.equals(name1)).count();
     long count2 = foNames.values().stream().filter(name -> name.equals(name2)).count();
-    if (people.values().stream().filter(p -> p.getName().equals(name1)).filter(p2 -> p2.getType(day).equals(Type.BO))
-        .findAny().orElse(null) != null) {
-      return name2;
-    }
-    if (people.values().stream().filter(p -> p.getName().equals(name2)).filter(p2 -> p2.getType(day).equals(Type.BO))
-        .findAny().orElse(null) != null) {
-      return name1;
-    }
-    return count1 < count2 ? name1 : name2;
+    //if (people.values().stream().filter(p -> p.getName().equals(name1)).filter(p2 -> p2.getType(day).equals(Type.BO))
+    //    .findAny().orElse(null) != null) {
+    //  return name2;
+    //}
+    //if (people.values().stream().filter(p -> p.getName().equals(name2)).filter(p2 -> p2.getType(day).equals(Type.BO))
+    //    .findAny().orElse(null) != null) {
+    //  return name1;
+    //}
+    return (count1 * 2 - countAll1) < (count2 * 2 - countAll2) ? name1 : name2;
   }
   // --------------------------------------------------------------------------------------------------
 
