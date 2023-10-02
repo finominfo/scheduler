@@ -43,12 +43,24 @@ public class ExcelExporter {
         CellStyle lightGreyStyle = getCellStyle(
                 workbook,
                 IndexedColors.GREY_25_PERCENT);
+
+        Font headerFont = workbook.createFont();
+        headerFont.setColor(IndexedColors.WHITE.index);
+
+        Font headerWDFont = workbook.createFont();
+        headerWDFont.setColor(IndexedColors.RED.index);
+
         CellStyle headerCellStyle = getCellStyle(
                 workbook,
-                IndexedColors.LIGHT_BLUE);
+                IndexedColors.BLACK);
+        headerCellStyle.setFont(headerFont);
         CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
         CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.YELLOW);
         CellStyle greenStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
+        CellStyle IMS1Style = getCellStyle(workbook, IndexedColors.PALE_BLUE);
+        CellStyle IMS2Style = getCellStyle(workbook, IndexedColors.LIGHT_YELLOW);
+        CellStyle wdStyle = getCellStyle(workbook, IndexedColors.BLACK);
+        wdStyle.setFont(headerWDFont);
 
         Cell cell = headerRow.createCell(colNum++);
         LocalDate ld = scheduler.getDate();
@@ -93,7 +105,7 @@ public class ExcelExporter {
                             .toUpperCase()
                             .substring(0, 3));
             dateCell.setCellStyle(
-                    weekendsAndHolidays.contains(i) ? headerRedCellStyle : lightGreyStyle);
+                    weekendsAndHolidays.contains(i) ? headerRedCellStyle : wdStyle);
         }
 
         for (String name : names) {
@@ -121,7 +133,8 @@ public class ExcelExporter {
                         cell.setCellValue(foName.equals(name) ? "IMS1" : "IMS2");
                     }
                     cell.setCellStyle(
-                            weekendsAndHolidays.contains(i) ? headerRedCellStyle : greenStyle);
+                            // weekendsAndHolidays.contains(i) ? headerRedCellStyle :
+                            (foName.equals(name) ? IMS1Style : IMS2Style));
                 } else if (hatedDays.contains(i)) {
                     cell.setCellValue("X");
                     cell.setCellStyle(

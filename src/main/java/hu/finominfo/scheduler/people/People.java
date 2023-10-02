@@ -14,14 +14,14 @@ public class People {
     private final Map<String, Person> people = new HashMap<>();
     private final Map<Integer, Set<String>> hated = new HashMap<>();
 
-
     public People() throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(Globals.getInstance().getConfigFile())));
+        String content = new String(Files.readAllBytes(Paths.get(Globals.getInstance().getConfigFile())), "UTF-8");
         String lines[] = content.split("\\r?\\n");
         for (int i = 0; i < 31 + 1; i++) {
             hated.put(i, new HashSet<>());
         }
-        List<String> keywords = Arrays.asList(new String[]{"nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri"});
+        List<String> keywords = Arrays
+                .asList(new String[] { "nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri" });
         Arrays.asList(lines).stream().forEach(line -> {
             Person person = null;
             for (String expression : line.split(",")) {
@@ -77,7 +77,8 @@ public class People {
                             person.getWantedDays().addAll(days);
                             for (int day : days) {
                                 if (person.getHatedDays().contains(day)) {
-                                    throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                                    throw new RuntimeException(
+                                            person.getName() + " wants and hates the same day: " + day);
                                 }
                             }
                             break;
@@ -85,15 +86,18 @@ public class People {
                             person.getHatedDays().addAll(days);
                             for (int day : days) {
                                 if (person.getWantedDays().contains(day)) {
-                                    throw new RuntimeException(person.getName() + " wants and hates the same day: " + day);
+                                    throw new RuntimeException(
+                                            person.getName() + " wants and hates the same day: " + day);
                                 }
                             }
                             break;
                         case 'f':
-                            for (int day : days) person.setType(day, Type.FO);
+                            for (int day : days)
+                                person.setType(day, Type.FO);
                             break;
                         case 'b':
-                            for (int day : days) person.setType(day, Type.BO);
+                            for (int day : days)
+                                person.setType(day, Type.BO);
                             break;
                         case '+':
                             person.getManualDayDifference().getAndSet(days.get(0));
