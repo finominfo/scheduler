@@ -21,7 +21,7 @@ public class People {
             hated.put(i, new HashSet<>());
         }
         List<String> keywords = Arrays
-                .asList(new String[] { "nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri" });
+                .asList(new String[] { "nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri", "wtue" });
         Arrays.asList(lines).stream().forEach(line -> {
             Person person = null;
             for (String expression : line.split(",")) {
@@ -56,6 +56,9 @@ public class People {
                             break;
                         case "hfri":
                             person.setHatesFridays(true);
+                            break;
+                        case "wtue":
+                            person.setWantedTuesdays(true);
                             break;
                     }
                 } else {

@@ -18,6 +18,8 @@ public class Person {
     private volatile boolean hatesWeekdays = false;
     private volatile boolean hatesMondays = false;
     private volatile boolean hatesTuesdays = false;
+    private volatile boolean wantedTuesdays = false;
+
     private volatile boolean hatesWednesdays = false;
     private volatile boolean hatesThursdays = false;
     private volatile boolean hatesFridays = false;
@@ -49,7 +51,7 @@ public class Person {
         return types.get(day);
     }
 
-    public void setType (int day, Type type) {
+    public void setType(int day, Type type) {
         types.put(day, type);
     }
 
@@ -91,6 +93,14 @@ public class Person {
 
     public void setHatesTuesdays(boolean hatesTuesdays) {
         this.hatesTuesdays = hatesTuesdays;
+    }
+
+    public boolean isWantedTuesdays() {
+        return wantedTuesdays;
+    }
+
+    public void setWantedTuesdays(boolean wantedTuesdays) {
+        this.wantedTuesdays = wantedTuesdays;
     }
 
     public boolean isHatesWednesdays() {
