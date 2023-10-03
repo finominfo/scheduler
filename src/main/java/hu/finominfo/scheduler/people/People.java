@@ -61,7 +61,7 @@ public class People {
                             person.setWantedTuesdays(true);
                             break;
                     }
-                } else {
+                } else if (trimmedExpression.length() >= 1){
                     String remaining = trimmedExpression.substring(1);
                     final List<Integer> days = new ArrayList<Integer>();
                     if (remaining.contains("-")) {

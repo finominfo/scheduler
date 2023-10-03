@@ -1,42 +1,29 @@
 package hu.finominfo.scheduler;
 
 import hu.finominfo.scheduler.people.People;
-import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.people.Type;
 import hu.finominfo.scheduler.scheduler.Scheduler;
+import hu.finominfo.scheduler.util.ExcelExporter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import hu.finominfo.scheduler.util.ExcelExporter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class MainTask {
 
+
+    private static final Logger LOGGER = LogManager.getLogger(MainTask.class);
     private final String[] args;
     private volatile LocalDate localDate;
 
@@ -46,7 +33,7 @@ public class MainTask {
 
     public void make() throws IOException {
         if (args != null && args.length == 1) {
-            System.out.println(args[0]);
+            LOGGER.info(args[0]);
             localDate = LocalDate.of(
                     2000 + Integer.valueOf(args[0].substring(0, 2)),
                     Integer.valueOf(args[0].substring(2)),
@@ -99,7 +86,7 @@ public class MainTask {
                         toFile3.append(System.lineSeparator());
                     }
                 });
-        System.out.println(toFile3.toString());
+        LOGGER.info(toFile3.toString());
         String fileName3 = "schedule-" + localDate.getYear() + ".txt";
         Files.write(
                 Paths.get(fileName3),
