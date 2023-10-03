@@ -33,28 +33,66 @@ public class Scheduler {
     private final LocalDate localDate;
     List<Type> foAbleTypes = Arrays.asList(Type.FO, Type.FO_AND_BO);
 
-  public Scheduler(Map<String, Person> people, LocalDate date) {
-    this.people = people;
-    this.numOfDays = date.lengthOfMonth();
-    for (int i = -8; i < numOfDays + 10; i++) {
-      scheduled.put(i, new HashSet<>());
-      hated.put(i, new HashSet<>());
+    public Scheduler(Map<String, Person> people, LocalDate date) {
+        this.people = people;
+        this.numOfDays = date.lengthOfMonth();
+        for (int i = -8; i < numOfDays + 10; i++) {
+            scheduled.put(i, new HashSet<>());
+            hated.put(i, new HashSet<>());
+        }
+        this.localDate = date.withDayOfMonth(1);
+        int year = date.getYear();
+        Month month = date.getMonth();
+        this.holidays.addAll(
+                HungarianHolidays
+                        .getHolidaysForMonth(year, month)
+                        .stream()
+                        .map(LocalDate::getDayOfMonth)
+                        .collect(Collectors.toList()));
+        countDays();
+        setHated();
+        setWanted();
+        setWeekendsAndHolidays();
+        setWeekdays();
+        balanceIMS();
     }
-    this.localDate = date.withDayOfMonth(1);
-    int year = date.getYear();
-    Month month = date.getMonth();
-    this.holidays.addAll(
-        HungarianHolidays
-            .getHolidaysForMonth(year, month)
-            .stream()
-            .map(LocalDate::getDayOfMonth)
-            .collect(Collectors.toList()));
-    countDays();
-    setHated();
-    setWanted();
-    setWeekendsAndHolidays();
-    setWeekdays();
-  }
+
+    private void balanceIMS() {
+        Set<Person> foPeople = people.values().stream().filter(p -> !p.isNofo()).collect(Collectors.toSet());
+        Person maxIMS1 = null;
+        long maxValue = 0;
+        for (int i = 0; i < 20; i++) {
+            for (Person p : foPeople) {
+                long value = getIMS1Value(p.getName());
+                if (value > maxValue) {
+                    maxValue = value;
+                    maxIMS1 = p;
+                }
+            }
+            if (maxValue > 2) {
+                Person finalMaxIMS = maxIMS1;
+                List<Map.Entry<Integer, Set<String>>> collected = scheduled.entrySet().stream().filter(e -> e.getValue().contains(finalMaxIMS.getName())).filter(e2 -> foNames.get(e2.getKey()).equals(finalMaxIMS.getName())).collect(Collectors.toList());
+                for (Map.Entry<Integer, Set<String>> entry : collected) {
+                    Iterator<String> iterator = entry.getValue().iterator();
+                    String name1 = iterator.next();
+                    String name2 = iterator.next();
+                    String name = finalMaxIMS.getName().equals(name1) ? name2 : name1;
+                    if ((foPeople.contains(name)) && (maxValue > getIMS1Value(name))) {
+                        //TODO: Logolni!!!
+                        foNames.put(entry.getKey(), name);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private long getIMS1Value(String name) {
+        long countAll = scheduled.values().stream().filter(s -> s.contains(name)).count();
+        long count = foNames.values().stream().filter(name1 -> name1.equals(name)).count();
+        long value = count * 2 - countAll;
+        return value;
+    }
 
     public List<Integer> getHolidays() {
         return holidays;
