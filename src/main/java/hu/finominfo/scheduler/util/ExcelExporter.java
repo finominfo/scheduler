@@ -54,7 +54,8 @@ public class ExcelExporter {
                 workbook,
                 IndexedColors.BLACK);
         headerCellStyle.setFont(headerFont);
-        CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
+        CellStyle headerOrangeCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
+        CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.RED);
         CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.YELLOW);
         CellStyle greenStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
         CellStyle IMS1Style = getCellStyle(workbook, IndexedColors.PALE_BLUE);
@@ -67,17 +68,20 @@ public class ExcelExporter {
         cell.setCellValue(ld.getYear() + " " + ld.getMonth().name());
         cell.setCellStyle(topLeftCellStyle);
 
-        List<Integer> weekendsAndHolidays = new ArrayList<>();
-        weekendsAndHolidays.addAll(scheduler.getSaturdays());
-        weekendsAndHolidays.addAll(scheduler.getSundays());
-        weekendsAndHolidays.addAll(scheduler.getHolidays());
+        List<Integer> weekends = new ArrayList<>();
+        weekends.addAll(scheduler.getSaturdays());
+        weekends.addAll(scheduler.getSundays());
+        List<Integer> holidays = new ArrayList<>();
+        holidays.addAll(scheduler.getHolidays());
 
         sheet.setColumnWidth(0, 20 * 256);
         for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
             cell = headerRow.createCell(colNum++);
             cell.setCellValue(i);
-            if (weekendsAndHolidays.contains(i)) {
+            if (holidays.contains(i)) {
                 cell.setCellStyle(headerRedCellStyle);
+            } else if (weekends.contains(i)) {
+                cell.setCellStyle(headerOrangeCellStyle);
             } else {
                 cell.setCellStyle(headerCellStyle);
             }
@@ -105,7 +109,7 @@ public class ExcelExporter {
                             .toUpperCase()
                             .substring(0, 3));
             dateCell.setCellStyle(
-                    weekendsAndHolidays.contains(i) ? headerRedCellStyle : wdStyle);
+                    holidays.contains(i) ? headerRedCellStyle : weekends.contains(i) ? headerOrangeCellStyle : wdStyle);
         }
 
         for (String name : names) {
@@ -133,14 +137,16 @@ public class ExcelExporter {
                         cell.setCellValue(foName.equals(name) ? "IMS1" : "IMS2");
                     }
                     cell.setCellStyle(
-                            // weekendsAndHolidays.contains(i) ? headerRedCellStyle :
+                            // weekends.contains(i) ? headerOrangeCellStyle :
                             (foName.equals(name) ? IMS1Style : IMS2Style));
                 } else if (hatedDays.contains(i)) {
                     cell.setCellValue("X");
                     cell.setCellStyle(
-                            weekendsAndHolidays.contains(i) ? headerRedCellStyle : lightGreyStyle);
-                } else if (weekendsAndHolidays.contains(i)) {
+                            holidays.contains(i) ? headerRedCellStyle : weekends.contains(i) ? headerOrangeCellStyle : lightGreyStyle);
+                } else if (holidays.contains(i)) {
                     cell.setCellStyle(headerRedCellStyle);
+                } else if (weekends.contains(i)) {
+                    cell.setCellStyle(headerOrangeCellStyle);
                 }
 
             }

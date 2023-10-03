@@ -7,8 +7,13 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class Scheduler {
+
+  private static final Logger LOGGER = LogManager.getLogger(Scheduler.class);
 
   private final Map<String, Person> people;
   private final Map<Integer, String> foNames = new HashMap<>();
@@ -132,7 +137,7 @@ public class Scheduler {
             if (scheduled.get(entry.getKey()).size() == 2) {
               foNames.put(entry.getKey(), selectFo(scheduled.get(entry.getKey()), entry.getKey()));
             }
-            System.out.println(
+            LOGGER.info(
                 possibleNames
                     .stream()
                     .map(e -> e.toString() + " ")
