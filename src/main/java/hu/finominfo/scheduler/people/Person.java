@@ -14,6 +14,7 @@ public class Person {
     private final AtomicInteger numOfScheduled = new AtomicInteger(0);
     private final AtomicInteger manualDayDifference = new AtomicInteger(0);
 
+    private volatile boolean nofo = false;
     private volatile boolean hatesWeekends = false;
     private volatile boolean hatesWeekdays = false;
     private volatile boolean hatesMondays = false;
@@ -23,6 +24,14 @@ public class Person {
     private volatile boolean hatesWednesdays = false;
     private volatile boolean hatesThursdays = false;
     private volatile boolean hatesFridays = false;
+
+    public boolean isNofo() {
+        return nofo;
+    }
+
+    public void setNofo(boolean nofo) {
+        this.nofo = nofo;
+    }
 
     public AtomicInteger getNumOfScheduled() {
         return numOfScheduled;

@@ -35,6 +35,7 @@ public class People {
                             for (int day : person.getTypes().keySet()) {
                                 person.setType(day, Type.BO);
                             }
+                            person.setNofo(true);
                             break;
                         case "hend":
                             person.setHatesWeekends(true);

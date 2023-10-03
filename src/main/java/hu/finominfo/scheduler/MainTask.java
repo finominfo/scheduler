@@ -58,7 +58,7 @@ public class MainTask {
                     ".csv";
             File file = new File(fileName2);
             if (file.exists() && !file.isDirectory()) {
-                String content = new String(Files.readAllBytes(Paths.get(fileName2)));
+                String content = new String(Files.readAllBytes(Paths.get(fileName2)), "UTF-8");
                 String lines[] = content.split("\\r?\\n");
                 Arrays
                         .asList(lines)

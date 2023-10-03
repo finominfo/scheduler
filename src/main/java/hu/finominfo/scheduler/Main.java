@@ -1,6 +1,9 @@
 package hu.finominfo.scheduler;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import hu.finominfo.scheduler.scheduler.Scheduler;
 import org.apache.logging.log4j.Level;
@@ -17,15 +20,13 @@ import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 public class Main {
 
 
-    static {
-        System.setProperty("log4j.xml", "resources/log4j.xml");
-        System.setProperty("logFilename", "scheduler.log");
-    }
-
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        //System.setProperty("log4j.configurationFile", String.valueOf(new File("resources", "log4j.xml").toURI()));
+        System.setProperty("log4j.configurationFile", "log4j2.properties");
+        System.setProperty("logFilename", "scheduler.log");
         try {
             MainTask mainTask = new MainTask(args);
             mainTask.make();

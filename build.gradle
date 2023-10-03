@@ -16,6 +16,9 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.20.0'
 }
 
+sourceSets.main.resources.srcDirs = [ "src/main/resources" ]
+sourceSets.main.resources.includes = [ "**/*.xml" ]
+
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest { attributes 'Main-Class': 'hu.finominfo.scheduler.Main' }
