@@ -8,11 +8,12 @@ import org.apache.logging.log4j.Logger;
 public class Main {
 
 
-    private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
+    private static volatile Logger LOGGER;
 
 
     public static void main(String[] args) throws Exception {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure("./log4j.properties");
+        LOGGER = LogManager.getLogger(Main.class.getName());
         LOGGER.warn("Started...");
         try {
             MainTask mainTask = new MainTask(args);
