@@ -13,11 +13,12 @@ public class Main {
             MainTask mainTask = new MainTask(args);
             mainTask.make();
         } catch (Exception e) {
-            String message = "";
-            for(StackTraceElement stackTraceElement : e.getStackTrace()) {
-                message = message + System.lineSeparator() + stackTraceElement.toString();
-            }
-            logger.error("Something weird happened. I will print the the complete stacktrace even if we have no exception just to help you find the cause" + message);
+            logger.error(e);
+//            String message = "";
+//            for(StackTraceElement stackTraceElement : e.getStackTrace()) {
+//                message = message + System.lineSeparator() + stackTraceElement.toString();
+//            }
+//            logger.error("Something weird happened. I will print the the complete stacktrace even if we have no exception just to help you find the cause" + message);
         }
     }
 

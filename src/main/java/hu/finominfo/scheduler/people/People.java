@@ -78,30 +78,20 @@ public class People {
                     }
                     switch (trimmedExpression.charAt(0)) {
                         case 'w':
-                            person.getWantedDays().addAll(days);
-                            for (int day : days) {
-                                if (person.getHatedDays().contains(day)) {
-                                    throw new RuntimeException(
-                                            person.getName() + " wants and hates the same day: " + day);
-                                }
-                            }
+                            setWantedDays(person, days);
                             break;
                         case 'h':
-                            person.getHatedDays().addAll(days);
-                            for (int day : days) {
-                                if (person.getWantedDays().contains(day)) {
-                                    throw new RuntimeException(
-                                            person.getName() + " wants and hates the same day: " + day);
-                                }
-                            }
+                            setHatedDays(person, days);
                             break;
                         case 'f':
                             for (int day : days)
                                 person.setType(day, Type.FO);
+                            //setWantedDays(person, days);
                             break;
                         case 'b':
                             for (int day : days)
                                 person.setType(day, Type.BO);
+                            //setWantedDays(person, days);
                             break;
                         case '+':
                             person.getManualDayDifference().getAndSet(days.get(0));
@@ -113,6 +103,26 @@ public class People {
                 }
             }
         });
+    }
+
+    private static void setHatedDays(Person person, List<Integer> days) {
+        person.getHatedDays().addAll(days);
+        for (int day : days) {
+            if (person.getWantedDays().contains(day)) {
+                throw new RuntimeException(
+                        person.getName() + " wants and hates the same day: " + day);
+            }
+        }
+    }
+
+    private static void setWantedDays(Person person, List<Integer> days) {
+        person.getWantedDays().addAll(days);
+        for (int day : days) {
+            if (person.getHatedDays().contains(day)) {
+                throw new RuntimeException(
+                        person.getName() + " wants and hates the same day: " + day);
+            }
+        }
     }
 
     public Map<String, Person> getPeople() {
