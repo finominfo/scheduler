@@ -7,13 +7,15 @@ import org.apache.logging.log4j.Logger;
 
 public class Main {
 
+    static {
+        //PropertyConfigurator.configure("./log4j.properties");
+    }
 
-    private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
+    private static final Logger logger = LogManager.getLogger(Main.class);
 
 
     public static void main(String[] args) throws Exception {
-        PropertyConfigurator.configure("log4j.properties");
-        LOGGER.warn("Started...");
+        logger.warn("Started...");
         try {
             MainTask mainTask = new MainTask(args);
             mainTask.make();
@@ -22,7 +24,7 @@ public class Main {
             for(StackTraceElement stackTraceElement : e.getStackTrace()) {
                 message = message + System.lineSeparator() + stackTraceElement.toString();
             }
-            LOGGER.error("Something weird happened. I will print the the complete stacktrace even if we have no exception just to help you find the cause" + message);
+            logger.error("Something weird happened. I will print the the complete stacktrace even if we have no exception just to help you find the cause" + message);
         }
     }
 
