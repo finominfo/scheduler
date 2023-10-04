@@ -81,16 +81,17 @@ public class Scheduler {
 //                System.out.println("collected: " + collected.size());
                 int position = -1;
                 for (Map.Entry<Integer, Set<String>> entry : collected) {
-                    Iterator<String> iterator = entry.getValue().iterator();
-                    String name1 = iterator.next();
-                    String name2 = iterator.next();
-                    String name = finalMaxIMS.getName().equals(name1) ? name2 : name1;
-//                    System.out.println(name + " = " + getIMS1Value(name));
-                    String s1 = foPeople.stream().map(Person::getName).filter(s -> s.equals(name)).findAny().orElse(null);
-                    if (s1 != null && getIMS1Value(name) < minValue) {
-                        minValue = getIMS1Value(name);
-                        minIMS1 = name;
-                        position = entry.getKey();
+                    if (!finalMaxIMS.getType(entry.getKey()).equals(Type.FO)) {
+                        Iterator<String> iterator = entry.getValue().iterator();
+                        String name1 = iterator.next();
+                        String name2 = iterator.next();
+                        String name = finalMaxIMS.getName().equals(name1) ? name2 : name1;
+                        Person person = people.values().stream().filter(p -> p.getName().equals(name)).findAny().orElse(null);
+                        if (person != null && !person.getType(entry.getKey()).equals(Type.BO) && getIMS1Value(name) < minValue) {
+                            minValue = getIMS1Value(name);
+                            minIMS1 = name;
+                            position = entry.getKey();
+                        }
                     }
                 }
                 if (maxValue - minValue > 1) {
@@ -218,6 +219,20 @@ public class Scheduler {
         }
         if (person1 != null && person2 != null) {
             throw new RuntimeException("Both people are nofo! " + name1 + " - " + name2);
+        }
+        if (person1.getType(day).equals(Type.BO) && person2.getType(day).equals(Type.FO)) {
+            return name2;
+        }
+        if (person1.getType(day).equals(Type.FO) && person2.getType(day).equals(Type.BO)) {
+            return name1;
+        }
+        if (person1.getType(day).equals(Type.FO) && person2.getType(day).equals(Type.FO)) {
+            LOGGER.error("Both people wants to be IMS1 on the same day " + names);
+            System.exit(0);
+        }
+        if (person1.getType(day).equals(Type.BO) && person2.getType(day).equals(Type.BO)) {
+            LOGGER.error("Both people wants to be IMS2 on the same day " + names);
+            System.exit(0);
         }
         return getIMS1Value(name1) < getIMS1Value(name2) ? name1 : name2;
         //return random.nextInt(2) == 0 ? name1 : name2;
