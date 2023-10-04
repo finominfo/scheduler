@@ -60,8 +60,8 @@ public class Scheduler {
     private void balanceIMS() {
         Set<Person> foPeople = people.values().stream().filter(p -> !p.isNofo()).collect(Collectors.toSet());
         Person maxIMS1 = null;
-        long maxValue = 0;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
+            long maxValue = 0;
             for (Person p : foPeople) {
                 long value = getIMS1Value(p.getName());
                 if (value > maxValue) {
@@ -69,16 +69,21 @@ public class Scheduler {
                     maxIMS1 = p;
                 }
             }
+//            System.out.println("maxValue: " + maxValue);
             if (maxValue > 2) {
                 Person finalMaxIMS = maxIMS1;
                 List<Map.Entry<Integer, Set<String>>> collected = scheduled.entrySet().stream().filter(e -> e.getValue().contains(finalMaxIMS.getName())).filter(e2 -> foNames.get(e2.getKey()).equals(finalMaxIMS.getName())).collect(Collectors.toList());
+//                System.out.println("collected: " + collected.size());
                 for (Map.Entry<Integer, Set<String>> entry : collected) {
                     Iterator<String> iterator = entry.getValue().iterator();
                     String name1 = iterator.next();
                     String name2 = iterator.next();
                     String name = finalMaxIMS.getName().equals(name1) ? name2 : name1;
-                    if ((foPeople.contains(name)) && (maxValue > getIMS1Value(name))) {
+//                    System.out.println(name + " = " + getIMS1Value(name));
+                    String s1 = foPeople.stream().map(Person::getName).filter(s -> s.equals(name)).findAny().orElse(null);
+                    if (s1 != null && maxValue - getIMS1Value(name) > 1) {
                         //TODO: Logolni!!!
+//                        System.out.println(finalMaxIMS.getName() + " -> " + name);
                         foNames.put(entry.getKey(), name);
                         break;
                     }
