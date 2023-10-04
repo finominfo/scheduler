@@ -17,7 +17,7 @@ public class Scheduler {
 
     private static final Logger LOGGER = LogManager.getLogger(Scheduler.class);
 
-    private  final Random random = new Random(System.currentTimeMillis());
+    private final Random random = new Random(System.currentTimeMillis());
 
     private final Map<String, Person> people;
     private final Map<Integer, String> foNames = new HashMap<>();
@@ -234,6 +234,10 @@ public class Scheduler {
                         .forEach(wantedDay -> {
                             Set<String> set = scheduled.get(wantedDay);
                             set.add(entry.getKey());
+                            if (set.size() > 2) {
+                                throw new RuntimeException(
+                                        "More than two people want the same day: " + set);
+                            }
                             if (set.size() == 2) {
                                 if (set
                                         .stream()

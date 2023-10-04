@@ -33,7 +33,7 @@ public class MainTask {
 
     public void make() throws IOException {
         if (args != null && args.length == 1) {
-            LOGGER.info(args[0]);
+            //LOGGER.info(args[0]);
             localDate = LocalDate.of(
                     2000 + Integer.valueOf(args[0].substring(0, 2)),
                     Integer.valueOf(args[0].substring(2)),
@@ -86,7 +86,7 @@ public class MainTask {
                         toFile3.append(System.lineSeparator());
                     }
                 });
-        LOGGER.info(toFile3.toString());
+        //LOGGER.info(toFile3.toString());
         String fileName3 = "schedule-" + localDate.getYear() + ".txt";
         Files.write(
                 Paths.get(fileName3),
