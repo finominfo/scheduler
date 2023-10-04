@@ -235,8 +235,8 @@ public class Scheduler {
                             Set<String> set = scheduled.get(wantedDay);
                             set.add(entry.getKey());
                             if (set.size() > 2) {
-                                throw new RuntimeException(
-                                        "More than two people want the same day: " + set);
+                                LOGGER.error("More than two people want the same day: " + set);
+                                System.exit(1);
                             }
                             if (set.size() == 2) {
                                 if (set
