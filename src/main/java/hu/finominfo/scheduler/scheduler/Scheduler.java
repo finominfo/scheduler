@@ -220,6 +220,8 @@ public class Scheduler {
         if (person1 != null && person2 != null) {
             throw new RuntimeException("Both people are nofo! " + name1 + " - " + name2);
         }
+        person1 = people.values().stream().filter(p -> p.getName().equals(name1)).findAny().orElse(null);
+        person2 = people.values().stream().filter(p -> p.getName().equals(name2)).findAny().orElse(null);
         if (person1.getType(day).equals(Type.BO) && person2.getType(day).equals(Type.FO)) {
             return name2;
         }

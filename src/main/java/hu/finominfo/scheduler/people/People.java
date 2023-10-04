@@ -24,11 +24,15 @@ public class People {
                 .asList(new String[] { "nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri", "wtue" });
         Arrays.asList(lines).stream().forEach(line -> {
             Person person = null;
-            for (String expression : line.split(",")) {
+            for (String expression : line.trim().split(" ")) {
                 final String trimmedExpression = expression.trim();
+                if (trimmedExpression.isEmpty()) {
+                    continue;
+                }
                 if (person == null) {
-                    person = new Person(trimmedExpression);
-                    people.put(trimmedExpression, person);
+                    String replaced = trimmedExpression.replace('*', ' ');
+                    person = new Person(replaced);
+                    people.put(replaced, person);
                 } else if (keywords.contains(trimmedExpression.toLowerCase())) {
                     switch (trimmedExpression.toLowerCase()) {
                         case "nofo":
