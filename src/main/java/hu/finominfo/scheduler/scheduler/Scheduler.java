@@ -17,6 +17,8 @@ public class Scheduler {
 
     private static final Logger LOGGER = LogManager.getLogger(Scheduler.class);
 
+    private  final Random random = new Random(System.currentTimeMillis());
+
     private final Map<String, Person> people;
     private final Map<Integer, String> foNames = new HashMap<>();
     private final Map<Integer, Set<String>> scheduled = new HashMap<>();
@@ -59,9 +61,11 @@ public class Scheduler {
 
     private void balanceIMS() {
         Set<Person> foPeople = people.values().stream().filter(p -> !p.isNofo()).collect(Collectors.toSet());
-        Person maxIMS1 = null;
         for (int i = 0; i < 10; i++) {
+            Person maxIMS1 = null;
+            String minIMS1 = null;
             long maxValue = 0;
+            long minValue = 0;
             for (Person p : foPeople) {
                 long value = getIMS1Value(p.getName());
                 if (value > maxValue) {
@@ -70,10 +74,12 @@ public class Scheduler {
                 }
             }
 //            System.out.println("maxValue: " + maxValue);
-            if (maxValue > 2) {
+            if (maxValue > 1) {
+                minValue = maxValue;
                 Person finalMaxIMS = maxIMS1;
                 List<Map.Entry<Integer, Set<String>>> collected = scheduled.entrySet().stream().filter(e -> e.getValue().contains(finalMaxIMS.getName())).filter(e2 -> foNames.get(e2.getKey()).equals(finalMaxIMS.getName())).collect(Collectors.toList());
 //                System.out.println("collected: " + collected.size());
+                int position = -1;
                 for (Map.Entry<Integer, Set<String>> entry : collected) {
                     Iterator<String> iterator = entry.getValue().iterator();
                     String name1 = iterator.next();
@@ -81,12 +87,14 @@ public class Scheduler {
                     String name = finalMaxIMS.getName().equals(name1) ? name2 : name1;
 //                    System.out.println(name + " = " + getIMS1Value(name));
                     String s1 = foPeople.stream().map(Person::getName).filter(s -> s.equals(name)).findAny().orElse(null);
-                    if (s1 != null && maxValue - getIMS1Value(name) > 1) {
-                        //TODO: Logolni!!!
-//                        System.out.println(finalMaxIMS.getName() + " -> " + name);
-                        foNames.put(entry.getKey(), name);
-                        break;
+                    if (s1 != null && getIMS1Value(name) < minValue) {
+                        minValue = getIMS1Value(name);
+                        minIMS1 = name;
+                        position = entry.getKey();
                     }
+                }
+                if (maxValue - minValue > 1) {
+                    foNames.put(position, minIMS1);
                 }
             }
         }
@@ -212,6 +220,7 @@ public class Scheduler {
             throw new RuntimeException("Both people are nofo! " + name1 + " - " + name2);
         }
         return getIMS1Value(name1) < getIMS1Value(name2) ? name1 : name2;
+        //return random.nextInt(2) == 0 ? name1 : name2;
     }
     // --------------------------------------------------------------------------------------------------
 
