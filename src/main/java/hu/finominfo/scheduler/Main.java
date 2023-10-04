@@ -1,18 +1,12 @@
 package hu.finominfo.scheduler;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class Main {
 
-    static {
-        //PropertyConfigurator.configure("./log4j.properties");
-    }
-
     private static final Logger logger = LogManager.getLogger(Main.class);
-
 
     public static void main(String[] args) throws Exception {
         logger.warn("Started...");
