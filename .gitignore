@@ -4,3 +4,6 @@
 bin
 build
 test
+target
+save
+dependency-reduced-pom.xml
