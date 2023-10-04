@@ -3,7 +3,4 @@
 .idea
 bin
 build
-target
 test
-save
-dependency-reduced-pom.xml
