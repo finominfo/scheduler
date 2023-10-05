@@ -547,4 +547,7 @@ public class Scheduler {
         return foNames;
     }
 
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
 }

@@ -4,6 +4,7 @@ import hu.finominfo.scheduler.people.People;
 import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.scheduler.Scheduler;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ExcelExporter {
 
@@ -57,15 +59,19 @@ public class ExcelExporter {
         CellStyle headerOrangeCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
         CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.RED);
         CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.YELLOW);
-        CellStyle greenStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
         CellStyle IMS1Style = getCellStyle(workbook, IndexedColors.PALE_BLUE);
         CellStyle IMS2Style = getCellStyle(workbook, IndexedColors.LIGHT_YELLOW);
         CellStyle wdStyle = getCellStyle(workbook, IndexedColors.BLACK);
         wdStyle.setFont(headerWDFont);
+        CellStyle headerLightOrangeCellStyle = getCellStyle(workbook, IndexedColors.LIGHT_ORANGE);
+        CellStyle headerLightGreenCellStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
+        CellStyle headerBlueGreyCellStyle = getCellStyle(workbook, IndexedColors.BLUE_GREY);
+        CellStyle headerPaleBlueCellStyle = getCellStyle(workbook, IndexedColors.PALE_BLUE);
+        CellStyle headerPinkCellStyle = getCellStyle(workbook, IndexedColors.PINK);
 
         Cell cell = headerRow.createCell(colNum++);
         LocalDate ld = scheduler.getDate();
-        cell.setCellValue(ld.getYear() + " " + ld.getMonth().name());
+        cell.setCellValue(ld.getYear() + " " + ld.getMonth().name().substring(0, 3));
         cell.setCellStyle(topLeftCellStyle);
 
         List<Integer> weekends = new ArrayList<>();
@@ -74,7 +80,7 @@ public class ExcelExporter {
         List<Integer> holidays = new ArrayList<>();
         holidays.addAll(scheduler.getHolidays());
 
-        sheet.setColumnWidth(0, 20 * 256);
+        sheet.setColumnWidth(0, 12 * 256);
         for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
             cell = headerRow.createCell(colNum++);
             cell.setCellValue(i);
@@ -85,7 +91,7 @@ public class ExcelExporter {
             } else {
                 cell.setCellStyle(headerCellStyle);
             }
-            sheet.setColumnWidth(i, (int) (4.5 * 256));
+            sheet.setColumnWidth(i, (int) (5 * 256));
         }
 
         List<String> names = people
@@ -152,6 +158,65 @@ public class ExcelExporter {
             }
         }
 
+
+        for (int i = 0; i < 3; i++) row = sheet.createRow(rowNum++);
+        colNum = 0;
+//        cell = row.createCell(colNum++);
+//        cell = row.createCell(colNum++);
+//        cell.setCellValue("WE=WE+HD");
+//        sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 1, colNum + 3));
+        for (int i = 0; i < 16; i++) cell = row.createCell(colNum++);
+        sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 1, colNum));
+        for (int i = 0; i < 2; i++) cell = row.createCell(colNum++);
+        LocalDate localDatePlusMinus = scheduler.getLocalDate().plusMonths(1).minusDays(1);
+        cell.setCellValue("up to " +
+                localDatePlusMinus.getMonth().toString().substring(0, 3) +
+                " " + localDatePlusMinus.getDayOfMonth());
+        cell.setCellStyle(headerLightOrangeCellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 1, colNum + 1));
+
+        row = sheet.createRow(rowNum++);
+        colNum = 0;
+        cell = row.createCell(colNum++);
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "IMS1\nWE");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "IMS1\nWD");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "IMS2\nWE");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "IMS2\nWD");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "NH");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WE");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WD");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "ALL");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row,
+                "" + (scheduler.getLocalDate().getYear()) + "\nWE");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row,
+                "" + (scheduler.getLocalDate().getYear()) + "\nNH");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row,
+                "" + (scheduler.getLocalDate().getYear()) + "\nALL");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "MON-\nTHU");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "FRI");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "SAT");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "SUN");
+        colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "NH");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WE\nSTAN\nDBY");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WD\nSTAN\nDBY");
+        colNum = writeNewCell(colNum, headerPinkCellStyle, row, "STAN\nDBY\nSUM");
+
+        //************************************************************************
+
+
+        for (String name : names) {
+            row = sheet.createRow(rowNum++);
+            colNum = 0;
+            colNum = writeNewCell(colNum, dataCellStyle, row, name);
+            long ims1Weekend = scheduler.getFoNames().entrySet().stream().filter(e -> e.getValue().contains(name)).filter(e2 -> weekends.contains(e2.getKey())).count();
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + ims1Weekend);
+
+        }
+
+
+
+        //************************************************************************
+
         String fileNameExcel = "schedule-" +
                 localDate.getYear() +
                 "-" +
@@ -161,6 +226,14 @@ public class ExcelExporter {
             workbook.write(outputStream);
         }
         workbook.close();
+    }
+
+    private static int writeNewCell(int colNum, CellStyle headerBlueGreyCellStyle, Row row, String str) {
+        Cell cell;
+        cell = row.createCell(colNum++);
+        cell.setCellValue(str);
+        cell.setCellStyle(headerBlueGreyCellStyle);
+        return  colNum;
     }
 
     private CellStyle getCellStyle(
@@ -181,6 +254,7 @@ public class ExcelExporter {
         style.setFillPattern(fillPatternType);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setWrapText(true);
         return style;
     }
 
