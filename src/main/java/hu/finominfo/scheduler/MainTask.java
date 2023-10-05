@@ -14,10 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainTask {
@@ -132,15 +129,25 @@ public class MainTask {
         people
                 .getPeople()
                 .entrySet()
+                .stream().sorted(Comparator.comparing(e -> {
+                    return e.getKey();
+                }))
                 .forEach(entry -> {
                     toTxtFile.append(
                             entry.getKey() + " - " + entry.getValue().getNumOfScheduled().get());
                     toTxtFile.append(System.lineSeparator());
-                    toFile.append(entry.getKey());
+                    toFile.append(entry.getKey().replaceAll(" ", "_"));
                     entry
                             .getValue()
                             .getWantedDays()
-                            .forEach(value -> toFile.append(", w" + value));
+                            .stream().sorted()
+                            .forEach(value -> toFile.append(" w" + value));
+                    entry
+                            .getValue()
+                            .getWantedDays()
+                            .stream().sorted()
+                            .forEach(value ->
+                                    toFile.append(" " + getFoSign(value, scheduler, entry.getValue().getName()) + value));
                     toFile.append(System.lineSeparator());
                 });
         toTxtFile.append(toFile);
@@ -162,6 +169,10 @@ public class MainTask {
                 Paths.get(fileName),
                 toFile.toString().getBytes("UTF-8"),
                 StandardOpenOption.CREATE);
+    }
+
+    private String getFoSign(int day, Scheduler scheduler, String name) {
+        return scheduler.getFoNames().get(day).equals(name) ? "f" : "b";
     }
 
 

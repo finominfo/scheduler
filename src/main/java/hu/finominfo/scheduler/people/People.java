@@ -30,7 +30,7 @@ public class People {
                     continue;
                 }
                 if (person == null) {
-                    String replaced = trimmedExpression.replace('*', ' ');
+                    String replaced = trimmedExpression.replaceAll("_", " ");
                     person = new Person(replaced);
                     people.put(replaced, person);
                 } else if (keywords.contains(trimmedExpression.toLowerCase())) {
