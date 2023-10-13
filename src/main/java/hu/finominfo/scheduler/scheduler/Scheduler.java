@@ -9,6 +9,7 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import hu.finominfo.scheduler.util.KeyValueStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +36,8 @@ public class Scheduler {
     private final LocalDate localDate;
     List<Type> foAbleTypes = Arrays.asList(Type.FO, Type.FO_AND_BO);
 
+    private final KeyValueStore keyValueStore;
+
     public Scheduler(Map<String, Person> people, LocalDate date) {
         this.people = people;
         this.numOfDays = date.lengthOfMonth();
@@ -51,6 +54,10 @@ public class Scheduler {
                         .stream()
                         .map(LocalDate::getDayOfMonth)
                         .collect(Collectors.toList()));
+
+        keyValueStore = new KeyValueStore();
+        keyValueStore.createDatabase();
+
         countDays();
         setHated();
         setWanted();
@@ -58,6 +65,12 @@ public class Scheduler {
         setWeekdays();
         balanceIMS();
     }
+
+    public KeyValueStore getKeyValueStore() {
+        return keyValueStore;
+    }
+
+
 
     private void balanceIMS() {
         Set<Person> foPeople = people.values().stream().filter(p -> !p.isNofo()).collect(Collectors.toSet());

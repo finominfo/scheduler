@@ -179,6 +179,10 @@ public class ExcelExporter {
                 .mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
 
+        KeyValueStore keyValueStore = scheduler.getKeyValueStore();
+        int year = scheduler.getDate().getYear();
+        int monthValue = scheduler.getDate().getMonthValue();
+
         for (String name : names) {
             row = sheet.createRow(rowNum++);
             colNum = 0;
@@ -241,7 +245,13 @@ public class ExcelExporter {
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + hol);
 
 
+            keyValueStore.writeData(name, year, monthValue, "WE", (int)(sat + sun));
+            keyValueStore.writeData(name, year, monthValue, "NH", (int)hol);
+            keyValueStore.writeData(name, year, monthValue, "ALL", scheduled.size());
+
         }
+
+        keyValueStore.printAll();
 
 
         //************************************************************************
