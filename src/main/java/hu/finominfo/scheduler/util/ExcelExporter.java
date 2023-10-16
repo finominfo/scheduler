@@ -183,6 +183,9 @@ public class ExcelExporter {
         int year = scheduler.getDate().getYear();
         int monthValue = scheduler.getDate().getMonthValue();
 
+        //int year2 = scheduler.getDate().minusMonths(1).getYear();
+        //int monthValue2 = scheduler.getDate().minusMonths(1).getMonthValue();
+
         for (String name : names) {
             row = sheet.createRow(rowNum++);
             colNum = 0;
@@ -212,9 +215,13 @@ public class ExcelExporter {
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + (ims1Weekday + ims2Weekday));
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + scheduled.size());
 
-            cell = row.createCell(colNum++);
-            cell = row.createCell(colNum++);
-            cell = row.createCell(colNum++);
+            long weAll = keyValueStore.sum(name, year, monthValue, "WE") + ims1Weekend + ims2Weekend;
+            long nhAll = keyValueStore.sum(name, year, monthValue, "NH") + numOfHolidays;
+            long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size();
+
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + weAll);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + nhAll);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + allAll);
 
 
             List<Integer> monToThu = scheduled.stream()

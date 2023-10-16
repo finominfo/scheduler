@@ -3,9 +3,17 @@ package hu.finominfo.scheduler.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class KeyValueStore {
     private static final String DB_URL = "jdbc:h2:./keyvaluestore";
@@ -76,25 +84,50 @@ public class KeyValueStore {
         return data;
     }
 
-    public void printAll() {
+    public int sum(String name, int year, int month, String type) {
+        int sum = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * from KeyValueStore");
+                    "SELECT SUM(value) FROM KeyValueStore WHERE name = ? AND year = ? AND month < ? AND type = ?");
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, year);
+            preparedStatement.setInt(3, month);
+            preparedStatement.setString(4, type);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                System.out.print(resultSet.getString(1));
-                System.out.print(" ");
-                System.out.print(resultSet.getInt(2));
-                System.out.print(" ");
-                System.out.print(resultSet.getInt(3));
-                System.out.print(" ");
-                System.out.print(resultSet.getString(4));
-                System.out.print(" ");
-                System.out.println(resultSet.getInt(5));
+            if (resultSet.next()) {
+                sum = resultSet.getInt(1);
             }
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sum;
+    }
+
+
+    public void printAll(){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * from KeyValueStore");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            StringBuilder sb = new StringBuilder();
+            while (resultSet.next()) {
+                sb.append(resultSet.getString(1));
+                sb.append(" ");
+                sb.append(resultSet.getInt(2));
+                sb.append(" ");
+                sb.append(resultSet.getInt(3));
+                sb.append(" ");
+                sb.append(resultSet.getString(4));
+                sb.append(" ");
+                sb.append(resultSet.getInt(5));
+                sb.append(System.lineSeparator());
+            }
+            resultSet.close();
+            preparedStatement.close();
+            Files.writeString(Path.of("allData.txt"), sb.toString(), UTF_8);
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
 
