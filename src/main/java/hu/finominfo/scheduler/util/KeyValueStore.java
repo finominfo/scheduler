@@ -164,46 +164,68 @@ public class KeyValueStore {
         keyValueStore.writeData("Békési Tamás", 2023, 10, "WE", 17);
         keyValueStore.writeData("Békési Tamás", 2023, 10, "NH", 2);
         keyValueStore.writeData("Békési Tamás", 2023, 10, "ALL", 55);
+        keyValueStore.writeData("Békési Tamás", 2023, 10, "FR", 9);
+        keyValueStore.writeData("Békési Tamás", 2023, 10, "SU", 6);
 
         keyValueStore.writeData("Fekete József", 2023, 10, "WE", 18);
         keyValueStore.writeData("Fekete József", 2023, 10, "NH", 1);
         keyValueStore.writeData("Fekete József", 2023, 10, "ALL", 62);
+        keyValueStore.writeData("Fekete József", 2023, 10, "FR", 10);
+        keyValueStore.writeData("Fekete József", 2023, 10, "SU", 8);
 
         keyValueStore.writeData("Granc Róbert", 2023, 10, "WE", 14);
         keyValueStore.writeData("Granc Róbert", 2023, 10, "NH", 1);
         keyValueStore.writeData("Granc Róbert", 2023, 10, "ALL", 56);
+        keyValueStore.writeData("Granc Róbert", 2023, 10, "FR", 6);
+        keyValueStore.writeData("Granc Róbert", 2023, 10, "SU", 3);
 
         keyValueStore.writeData("Hossam Youssef", 2023, 10, "WE", 12);
         keyValueStore.writeData("Hossam Youssef", 2023, 10, "NH", 0);
         keyValueStore.writeData("Hossam Youssef", 2023, 10, "ALL", 36);
+        keyValueStore.writeData("Hossam Youssef", 2023, 10, "FR", 0);
+        keyValueStore.writeData("Hossam Youssef", 2023, 10, "SU", 9);
 
         keyValueStore.writeData("Islam Sayed", 2023, 10, "WE", 10);
         keyValueStore.writeData("Islam Sayed", 2023, 10, "NH", 2);
         keyValueStore.writeData("Islam Sayed", 2023, 10, "ALL", 36);
+        keyValueStore.writeData("Islam Sayed", 2023, 10, "FR", 0);
+        keyValueStore.writeData("Islam Sayed", 2023, 10, "SU", 6);
 
         keyValueStore.writeData("Maher Adly Maher", 2023, 10, "WE", 10);
         keyValueStore.writeData("Maher Adly Maher", 2023, 10, "NH", 1);
         keyValueStore.writeData("Maher Adly Maher", 2023, 10, "ALL", 39);
+        keyValueStore.writeData("Maher Adly Maher", 2023, 10, "FR", 8);
+        keyValueStore.writeData("Maher Adly Maher", 2023, 10, "SU", 5);
 
         keyValueStore.writeData("Nagy Zoltán", 2023, 10, "WE", 16);
         keyValueStore.writeData("Nagy Zoltán", 2023, 10, "NH", 0);
         keyValueStore.writeData("Nagy Zoltán", 2023, 10, "ALL", 54);
+        keyValueStore.writeData("Nagy Zoltán", 2023, 10, "FR", 12);
+        keyValueStore.writeData("Nagy Zoltán", 2023, 10, "SU", 6);
 
         keyValueStore.writeData("Pintér Dávid", 2023, 10, "WE", 14);
         keyValueStore.writeData("Pintér Dávid", 2023, 10, "NH", 2);
         keyValueStore.writeData("Pintér Dávid", 2023, 10, "ALL", 56);
+        keyValueStore.writeData("Pintér Dávid", 2023, 10, "FR", 10);
+        keyValueStore.writeData("Pintér Dávid", 2023, 10, "SU", 5);
 
         keyValueStore.writeData("Ritter Gergő", 2023, 10, "WE", 16);
         keyValueStore.writeData("Ritter Gergő", 2023, 10, "NH", 0);
         keyValueStore.writeData("Ritter Gergő", 2023, 10, "ALL", 55);
+        keyValueStore.writeData("Ritter Gergő", 2023, 10, "FR", 10);
+        keyValueStore.writeData("Ritter Gergő", 2023, 10, "SU", 7);
 
         keyValueStore.writeData("Tima Gergely", 2023, 10, "WE", 23);
         keyValueStore.writeData("Tima Gergely", 2023, 10, "NH", 0);
         keyValueStore.writeData("Tima Gergely", 2023, 10, "ALL", 61);
+        keyValueStore.writeData("Tima Gergely", 2023, 10, "FR", 0);
+        keyValueStore.writeData("Tima Gergely", 2023, 10, "SU", 23);
 
         keyValueStore.writeData("Tóth Sándor", 2023, 10, "WE", 8);
         keyValueStore.writeData("Tóth Sándor", 2023, 10, "NH", 2);
         keyValueStore.writeData("Tóth Sándor", 2023, 10, "ALL", 37);
+        keyValueStore.writeData("Tóth Sándor", 2023, 10, "FR", 12);
+        keyValueStore.writeData("Tóth Sándor", 2023, 10, "SU", 4);
 
         keyValueStore.connection.commit();
 

@@ -12,6 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class ExcelExporter {
     private final Scheduler scheduler;
     private final People people;
     private final LocalDate localDate;
+
+    //private final DecimalFormat df = new DecimalFormat("#.##");
+    private final DecimalFormat df = new DecimalFormat("#");
 
     public ExcelExporter(Scheduler scheduler, People people, LocalDate localDate) {
         this.scheduler = scheduler;
@@ -184,6 +188,16 @@ public class ExcelExporter {
                 .mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
 
+        List<Integer> sundays = IntStream.rangeClosed(1, scheduler.getNumOfDays())
+                .filter(i -> localDate.withDayOfMonth(i).getDayOfWeek().equals(DayOfWeek.SUNDAY))
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+
+        List<Integer> saturdays = IntStream.rangeClosed(1, scheduler.getNumOfDays())
+                .filter(i -> localDate.withDayOfMonth(i).getDayOfWeek().equals(DayOfWeek.SATURDAY))
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+
         KeyValueStore keyValueStore = scheduler.getKeyValueStore();
         int year = scheduler.getDate().getYear();
         int monthValue = scheduler.getDate().getMonthValue();
@@ -199,6 +213,10 @@ public class ExcelExporter {
                     .filter(e -> e.getValue().contains(name))
                     .map(e2 -> e2.getKey())
                     .collect(Collectors.toList());
+            long numOfFridays = scheduled.stream().filter(fridays::contains).filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
+            long numOfSaturdays = scheduled.stream().filter(saturdays::contains).filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
+            long numOfSundays = scheduled.stream().filter(sundays::contains).filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
+            long numOfHolidays = scheduled.stream().filter(s -> scheduler.getHolidays().contains(s)).count();
             List<Integer> ims1Scheduled = scheduler.getFoNames().entrySet().stream()
                     .filter(e -> e.getValue().contains(name))
                     .map(e2 -> e2.getKey())
@@ -206,15 +224,14 @@ public class ExcelExporter {
             List<Integer> ims2Scheduled = scheduled.stream()
                     .filter(s -> !ims1Scheduled.contains(s))
                     .collect(Collectors.toList());
-            long ims1Weekend = ims1Scheduled.stream().filter(s -> weekends.contains(s)).count();
+            long ims1Weekend = ims1Scheduled.stream().filter(s -> weekends.contains(s)).filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
             long ims1Weekday = ims1Scheduled.size() - ims1Weekend;
-            long ims2Weekend = ims2Scheduled.stream().filter(s -> weekends.contains(s)).count();
+            long ims2Weekend = ims2Scheduled.stream().filter(s -> weekends.contains(s)).filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
             long ims2Weekday = ims2Scheduled.size() - ims2Weekend;
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + ims1Weekend);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + ims1Weekday);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + ims2Weekend);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + ims2Weekday);
-            long numOfHolidays = scheduled.stream().filter(s -> scheduler.getHolidays().contains(s)).count();
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + numOfHolidays);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + (ims1Weekend + ims2Weekend));
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + (ims1Weekday + ims2Weekday));
@@ -223,6 +240,10 @@ public class ExcelExporter {
             long weAll = keyValueStore.sum(name, year, monthValue, "WE") + ims1Weekend + ims2Weekend;
             long nhAll = keyValueStore.sum(name, year, monthValue, "NH") + numOfHolidays;
             long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size();
+            long frAll = keyValueStore.sum(name, year, monthValue, "FR") + numOfFridays;
+            long mon2ThuAll = allAll - weAll - frAll;
+            long suAll = keyValueStore.sum(name, year, monthValue, "SU") + numOfSundays;
+            long saAll = weAll - suAll;
 
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + weAll);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + nhAll);
@@ -241,27 +262,43 @@ public class ExcelExporter {
                     .filter(s3 -> !holidays.contains(s3))
                     .collect(Collectors.toList());
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + fridayList.size());
-            long sat = scheduled.stream()
-                    .filter(s1 -> scheduler.getSaturdays().contains(s1))
-                    .filter(s2 -> !holidays.contains(s2))
-                    .count();
-            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + sat);
-            long sun = scheduled.stream()
-                    .filter(s1 -> scheduler.getSundays().contains(s1))
-                    .filter(s2 -> !holidays.contains(s2))
-                    .count();
-            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + sun);
-            long hol = scheduled.stream()
-                    .filter(s1 -> scheduler.getHolidays().contains(s1))
-                    .count();
-            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + hol);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + numOfSaturdays);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + numOfSundays);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, "" + numOfHolidays);
 
 
-            keyValueStore.writeData(name, year, monthValue, "WE", (int)(sat + sun));
-            keyValueStore.writeData(name, year, monthValue, "NH", (int)hol);
+            double weekendSBNum = 3.6 * frAll + 9.6 * saAll + 6 * suAll + 9.6 * nhAll;
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, df.format(weekendSBNum));
+            double weekdaySBNum = 3.2 * mon2ThuAll + 1.4 * frAll + 1.8 * suAll;
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, df.format(weekdaySBNum));
+            double allSBNum = weekendSBNum + weekdaySBNum;
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle, row, df.format(allSBNum));
+
+
+            keyValueStore.writeData(name, year, monthValue, "WE", (int)(numOfSaturdays + numOfSundays));
+            keyValueStore.writeData(name, year, monthValue, "NH", (int)numOfHolidays);
             keyValueStore.writeData(name, year, monthValue, "ALL", scheduled.size());
+            keyValueStore.writeData(name, year, monthValue, "FR", (int)numOfFridays);
+            keyValueStore.writeData(name, year, monthValue, "SU", (int)numOfSundays);
+
 
         }
+
+        row = sheet.createRow(rowNum++);
+        colNum = 0;
+        cell = row.createCell(colNum++);
+        for (int i = 0; i < 19; i++) {
+            Cell summaryCell = row.createCell(colNum++, CellType.FORMULA);
+            summaryCell.setCellStyle(headerRedCellStyle);
+            char colName = (char) (64 + colNum);
+            int endNum = rowNum - 1;
+            int startNum = endNum - names.size() + 1;
+            summaryCell.setCellFormula("SUM(" + colName + startNum + ":" + colName + endNum + ")");
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator.evaluate(summaryCell);
+        }
+
+
 
         keyValueStore.printAll(year);
         try {
@@ -280,12 +317,27 @@ public class ExcelExporter {
         workbook.close();
     }
 
-    private static int writeNewCell(int colNum, CellStyle headerBlueGreyCellStyle, Row row, String str) {
+    private static int writeNewCell(int colNum, CellStyle cellStyle, Row row, String str) {
         Cell cell;
-        cell = row.createCell(colNum++);
-        cell.setCellValue(str);
-        cell.setCellStyle(headerBlueGreyCellStyle);
+        if (isNumeric(str)) {
+            cell = row.createCell(colNum++, CellType.NUMERIC);
+            cell.setCellValue(Double.parseDouble(str));
+            cell.setCellStyle(cellStyle);
+        } else {
+            cell = row.createCell(colNum++);
+            cell.setCellValue(str);
+            cell.setCellStyle(cellStyle);
+        }
         return colNum;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str); // Use Integer.parseInt() for integers
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private CellStyle getCellStyle(Workbook workbook, IndexedColors indexedColors) {
