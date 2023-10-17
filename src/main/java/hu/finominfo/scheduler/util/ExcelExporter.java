@@ -58,18 +58,20 @@ public class ExcelExporter {
 
         CellStyle headerCellStyle = getCellStyle(workbook, IndexedColors.BLACK);
         headerCellStyle.setFont(headerFont);
-        CellStyle headerOrangeCellStyle = getCellStyle(workbook, IndexedColors.ORANGE);
+        CellStyle headerOrangeCellStyle = getCellStyle(workbook, IndexedColors.AQUA);
+        CellStyle sumCellStyle = getCellStyle(workbook, IndexedColors.CORAL);
         CellStyle headerRedCellStyle = getCellStyle(workbook, IndexedColors.RED);
-        CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.YELLOW);
+        CellStyle dataCellStyle = getCellStyle(workbook, IndexedColors.CORAL);
         CellStyle IMS1Style = getCellStyle(workbook, IndexedColors.PALE_BLUE);
         CellStyle IMS2Style = getCellStyle(workbook, IndexedColors.LIGHT_YELLOW);
         CellStyle wdStyle = getCellStyle(workbook, IndexedColors.BLACK);
         wdStyle.setFont(headerWDFont);
-        CellStyle headerLightOrangeCellStyle = getCellStyle(workbook, IndexedColors.LIGHT_ORANGE);
+        CellStyle headerLightOrangeCellStyle = getCellStyle(workbook, IndexedColors.AQUA);
         CellStyle headerLightGreenCellStyle = getCellStyle(workbook, IndexedColors.LIGHT_GREEN);
-        CellStyle headerBlueGreyCellStyle = getCellStyle(workbook, IndexedColors.BLUE_GREY);
+        CellStyle headerBlueGreyCellStyle = getCellStyle(workbook, IndexedColors.GREY_25_PERCENT);
         CellStyle headerPaleBlueCellStyle = getCellStyle(workbook, IndexedColors.PALE_BLUE);
-        CellStyle headerPinkCellStyle = getCellStyle(workbook, IndexedColors.PINK);
+        CellStyle headerPinkCellStyle = getCellStyle(workbook, IndexedColors.LIGHT_TURQUOISE);
+        CellStyle basicStyle = getCellStyle(workbook, IndexedColors.TEAL);
 
         Cell cell = headerRow.createCell(colNum++);
         LocalDate ld = scheduler.getDate();
@@ -101,6 +103,7 @@ public class ExcelExporter {
         Row row = sheet.createRow(rowNum++);
         colNum = 0;
         Cell dateCell = row.createCell(colNum++);
+        dateCell.setCellStyle(topLeftCellStyle);
         for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
             dateCell = row.createCell(colNum++);
             dateCell.setCellValue(localDate.withDayOfMonth(i).getDayOfWeek().name().toUpperCase().substring(0, 3));
@@ -117,6 +120,7 @@ public class ExcelExporter {
             dateCell.setCellStyle(dataCellStyle);
             for (int i = 1; i <= scheduler.getNumOfDays(); i++) {
                 cell = row.createCell(colNum++);
+                cell.setCellStyle(basicStyle);
                 if (places.contains(i)) {
                     String foName = scheduler.getFoNames().get(i);
                     if (foName == null) {
@@ -129,7 +133,8 @@ public class ExcelExporter {
                             (foName.equals(name) ? IMS1Style : IMS2Style));
                 } else if (hatedDays.contains(i)) {
                     cell.setCellValue("X");
-                    cell.setCellStyle(holidays.contains(i) ? headerRedCellStyle : weekends.contains(i) ? headerOrangeCellStyle : lightGreyStyle);
+                    //cell.setCellStyle(holidays.contains(i) ? headerRedCellStyle : weekends.contains(i) ? headerOrangeCellStyle : lightGreyStyle);
+                    cell.setCellStyle(lightGreyStyle);
                 } else if (holidays.contains(i)) {
                     cell.setCellStyle(headerRedCellStyle);
                 } else if (weekends.contains(i)) {
@@ -289,7 +294,7 @@ public class ExcelExporter {
         cell = row.createCell(colNum++);
         for (int i = 0; i < 19; i++) {
             Cell summaryCell = row.createCell(colNum++, CellType.FORMULA);
-            summaryCell.setCellStyle(headerRedCellStyle);
+            summaryCell.setCellStyle(sumCellStyle);
             char colName = (char) (64 + colNum);
             int endNum = rowNum - 1;
             int startNum = endNum - names.size() + 1;
