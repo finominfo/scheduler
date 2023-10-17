@@ -1,10 +1,12 @@
 package hu.finominfo.scheduler.people;
 
 import hu.finominfo.scheduler.common.Globals;
+import hu.finominfo.scheduler.util.KeyValueStore;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -14,25 +16,42 @@ public class People {
     private final Map<String, Person> people = new HashMap<>();
     private final Map<Integer, Set<String>> hated = new HashMap<>();
 
-    public People() throws IOException {
+    public People() throws IOException, SQLException {
         String content = new String(Files.readAllBytes(Paths.get(Globals.getInstance().getConfigFile())), "UTF-8");
         String lines[] = content.split("\\r?\\n");
         for (int i = 0; i < 31 + 1; i++) {
             hated.put(i, new HashSet<>());
         }
+        KeyValueStore keyValueStore = new KeyValueStore();
+        List<String> names = keyValueStore.getNames();
+        keyValueStore.close();
         List<String> keywords = Arrays
                 .asList(new String[] { "nofo", "hend", "hweek", "hmon", "htue", "hwen", "hthu", "hfri", "wtue" });
         Arrays.asList(lines).stream().forEach(line -> {
             Person person = null;
+            Person newPerson = null;
             for (String expression : line.trim().split(" ")) {
                 final String trimmedExpression = expression.trim();
                 if (trimmedExpression.isEmpty()) {
                     continue;
                 }
                 if (person == null) {
-                    String replaced = trimmedExpression.replaceAll("_", " ");
-                    person = new Person(replaced);
-                    people.put(replaced, person);
+                    if (newPerson != null) {
+                        if(trimmedExpression.equalsIgnoreCase("newperson")) {
+                            person = newPerson;
+                            people.put(person.getName(), person);
+                        } else {
+                            throw new RuntimeException("New person (" + newPerson.getName() + ") allowed only with newperson command" );
+                        }
+                    } else {
+                        String replaced = trimmedExpression.replaceAll("_", " ");
+                        if (names.contains(replaced)) {
+                            person = new Person(replaced);
+                            people.put(replaced, person);
+                        } else {
+                            newPerson = new Person(replaced);
+                        }
+                    }
                 } else if (keywords.contains(trimmedExpression.toLowerCase())) {
                     switch (trimmedExpression.toLowerCase()) {
                         case "nofo":

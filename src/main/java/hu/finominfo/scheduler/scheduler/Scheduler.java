@@ -56,7 +56,7 @@ public class Scheduler {
                         .collect(Collectors.toList()));
 
         keyValueStore = new KeyValueStore();
-        keyValueStore.createDatabase();
+        //keyValueStore.createDatabase();
 
         countDays();
         setHated();

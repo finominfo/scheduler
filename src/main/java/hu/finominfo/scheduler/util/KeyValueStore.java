@@ -10,7 +10,9 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -105,11 +107,28 @@ public class KeyValueStore {
         return sum;
     }
 
-
-    public void printAll(){
+    public List<String> getNames() {
+        List<String> names = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * from KeyValueStore");
+                    "SELECT DISTINCT name FROM KeyValueStore");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                names.add(resultSet.getString(1));
+            }
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return names;
+    }
+
+
+    public void printAll(int year){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * from KeyValueStore where year = " + year);
             ResultSet resultSet = preparedStatement.executeQuery();
             StringBuilder sb = new StringBuilder();
             while (resultSet.next()) {
@@ -131,6 +150,11 @@ public class KeyValueStore {
             e.printStackTrace();
         }
 
+    }
+
+    public void close() throws SQLException {
+        connection.commit();
+        connection.close();
     }
 
     public static void main(String[] args) throws SQLException {
@@ -182,8 +206,6 @@ public class KeyValueStore {
         keyValueStore.writeData("Tóth Sándor", 2023, 10, "ALL", 37);
 
         keyValueStore.connection.commit();
-
-        keyValueStore.printAll();
 
         keyValueStore.connection.close();
 

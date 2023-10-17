@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,7 +29,7 @@ public class MainTask {
         this.args = args;
     }
 
-    public void make() throws IOException {
+    public void make() throws IOException, SQLException {
         if (args != null && args.length == 1) {
             //LOGGER.info(args[0]);
             localDate = LocalDate.of(

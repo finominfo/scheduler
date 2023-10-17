@@ -3,12 +3,15 @@ package hu.finominfo.scheduler.util;
 import hu.finominfo.scheduler.people.People;
 import hu.finominfo.scheduler.people.Person;
 import hu.finominfo.scheduler.scheduler.Scheduler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ExcelExporter {
+
+    private static final Logger logger = LogManager.getLogger(ExcelExporter.class);
 
     private final Scheduler scheduler;
     private final People people;
@@ -258,7 +263,12 @@ public class ExcelExporter {
 
         }
 
-        keyValueStore.printAll();
+        keyValueStore.printAll(year);
+        try {
+            keyValueStore.close();
+        } catch (SQLException e) {
+            logger.error(e);
+        }
 
 
         //************************************************************************
