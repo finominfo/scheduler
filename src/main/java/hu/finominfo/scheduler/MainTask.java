@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainTask {
 
-
     private static final Logger LOGGER = LogManager.getLogger(MainTask.class);
     private final String[] args;
     private volatile LocalDate localDate;
@@ -31,7 +30,7 @@ public class MainTask {
 
     public void make() throws IOException, SQLException {
         if (args != null && args.length == 1) {
-            //LOGGER.info(args[0]);
+            // LOGGER.info(args[0]);
             localDate = LocalDate.of(
                     2000 + Integer.valueOf(args[0].substring(0, 2)),
                     Integer.valueOf(args[0].substring(2)),
@@ -84,12 +83,12 @@ public class MainTask {
                         toFile3.append(System.lineSeparator());
                     }
                 });
-        //LOGGER.info(toFile3.toString());
+        // LOGGER.info(toFile3.toString());
         String fileName3 = "schedule-" + localDate.getYear() + ".txt";
-        Files.write(
-                Paths.get(fileName3),
-                toFile3.toString().getBytes("UTF-8"),
-                StandardOpenOption.CREATE);
+        // Files.write(
+        // Paths.get(fileName3),
+        // toFile3.toString().getBytes("UTF-8"),
+        // StandardOpenOption.CREATE);
     }
 
     public void writeMonth(Scheduler scheduler, People people)
@@ -147,8 +146,8 @@ public class MainTask {
                             .getValue()
                             .getWantedDays()
                             .stream().sorted()
-                            .forEach(value ->
-                                    toFile.append(" " + getFoSign(value, scheduler, entry.getValue().getName()) + value));
+                            .forEach(value -> toFile
+                                    .append(" " + getFoSign(value, scheduler, entry.getValue().getName()) + value));
                     toFile.append(System.lineSeparator());
                 });
         toTxtFile.append(toFile);
@@ -157,10 +156,10 @@ public class MainTask {
                 "-" +
                 localDate.getMonthValue() +
                 ".txt";
-        Files.write(
-                Paths.get(fileNameTxt),
-                toTxtFile.toString().getBytes("UTF-8"),
-                StandardOpenOption.CREATE);
+        // Files.write(
+        // Paths.get(fileNameTxt),
+        // toTxtFile.toString().getBytes("UTF-8"),
+        // StandardOpenOption.CREATE);
         String fileName = "schedule-" +
                 localDate.getYear() +
                 "-" +
@@ -175,6 +174,5 @@ public class MainTask {
     private String getFoSign(int day, Scheduler scheduler, String name) {
         return scheduler.getFoNames().get(day).equals(name) ? "f" : "b";
     }
-
 
 }
