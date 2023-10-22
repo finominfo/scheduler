@@ -160,7 +160,11 @@ public class ExcelExporter {
         // 1, colNum + 3));
         // sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum -
         // 1, colNum));
-        for (int i = 0; i < 18; i++)
+        for (int i = 0; i < 9; i++)
+            cell = row.createCell(colNum++);
+        colNum = writeNewCell(colNum, headerLightOrangeCellStyle, row, "" + (scheduler.getLocalDate().getYear()) + " SUMMARIZE");
+        sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 1, colNum + 5));
+        for (int i = 0; i < 12; i++)
             cell = row.createCell(colNum++);
         LocalDate localDatePlusMinus = scheduler.getLocalDate().plusMonths(1).minusDays(1);
         cell.setCellValue("up to " + localDatePlusMinus.getMonth().toString().substring(0, 3) + " "
@@ -179,10 +183,13 @@ public class ExcelExporter {
         colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WE");
         colNum = writeNewCell(colNum, headerPinkCellStyle, row, "WD");
         colNum = writeNewCell(colNum, headerPinkCellStyle, row, "ALL");
-        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "" + (scheduler.getLocalDate().getYear()) + "\nWE");
-        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "" + (scheduler.getLocalDate().getYear()) + "\nNH");
-        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row,
-                "" + (scheduler.getLocalDate().getYear()) + "\nALL");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "MON-\nTHU");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "FR");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "SA");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "SU");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "WE");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row, "NH");
+        colNum = writeNewCell(colNum, headerPaleBlueCellStyle, row,"ALL");
         colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "MON-\nTHU");
         colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "FRI");
         colNum = writeNewCell(colNum, headerBlueGreyCellStyle, row, "SAT");
@@ -269,18 +276,28 @@ public class ExcelExporter {
 
             long weAll = keyValueStore.sum(name, year, monthValue, "WE") + ims1Weekend + ims2Weekend;
             long nhAll = keyValueStore.sum(name, year, monthValue, "NH") + numOfHolidays;
-            long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size();
+            long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size(); 
             long frAll = keyValueStore.sum(name, year, monthValue, "FR") + numOfFridays;
             long mon2ThuAll = allAll - weAll - frAll;
             long suAll = keyValueStore.sum(name, year, monthValue, "SU") + numOfSundays;
             long saAll = weAll - suAll;
+            long allAllPlusNhAll = allAll + nhAll; //TODO: Ez biztos, hogy jó így?
 
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
+                    row, "" + mon2ThuAll);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
+                    row, "" + frAll);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
+                    row, "" + saAll);
+            colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
+                    row, "" + suAll);
+
+                    colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + weAll);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + nhAll);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
-                    row, "" + allAll);
+                    row, "" + allAllPlusNhAll); 
 
             List<Integer> monToThu = scheduled.stream()
                     .filter(s1 -> !weekends.contains(s1))
@@ -330,13 +347,13 @@ public class ExcelExporter {
         row = sheet.createRow(rowNum++);
         colNum = 0;
         cell = row.createCell(colNum++);
-        for (int i = 0; i < 19; i++) {
+        for (int i = 0; i < 23; i++) {
             Cell summaryCell = row.createCell(colNum++, CellType.FORMULA);
             summaryCell.setCellStyle(sumCellStyle);
             char colName = (char) (64 + colNum);
             int endNum = rowNum - 1;
             int startNum = endNum - names.size() + 1;
-            if (i > 15) {
+            if (i > 19) {
                 row.createCell(colNum++, CellType.FORMULA);
                 sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 2, colNum - 1));
             }

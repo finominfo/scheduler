@@ -1,6 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "prettier.singleQuote": true,
     "prettier.trailingComma": "all",
     "[jsonc]": {
