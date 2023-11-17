@@ -251,11 +251,9 @@ public class ExcelExporter {
             List<Integer> ims2Scheduled = scheduled.stream()
                     .filter(s -> !ims1Scheduled.contains(s))
                     .collect(Collectors.toList());
-            long ims1Weekend = ims1Scheduled.stream().filter(s -> weekends.contains(s))
-                    .filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
+            long ims1Weekend = ims1Scheduled.stream().filter(s -> weekends.contains(s)).count();
             long ims1Weekday = ims1Scheduled.size() - ims1Weekend;
-            long ims2Weekend = ims2Scheduled.stream().filter(s -> weekends.contains(s))
-                    .filter(s2 -> !scheduler.getHolidays().contains(s2)).count();
+            long ims2Weekend = ims2Scheduled.stream().filter(s -> weekends.contains(s)).count();
             long ims2Weekday = ims2Scheduled.size() - ims2Weekend;
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + ims1Weekend);
