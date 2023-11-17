@@ -539,14 +539,12 @@ public class Scheduler {
         if (first.isPresent()) {
             scheduled.get(day).add(first.get());
         } else {
-            throw new RuntimeException(
-                    "There is no suitable people for " +
-                            day +
-                            ". " +
-                            orderedPersons
+            String strPerson = orderedPersons
                                     .stream()
                                     .map(e -> e.toString() + " ")
-                                    .reduce("", String::concat));
+                                    .reduce("", String::concat);
+            String message = orderedPersons.isEmpty() ? "I found no person for " + day : "I found only one person (" + strPerson + ") for " + day;
+            throw new RuntimeException(message);
         }
     }
 

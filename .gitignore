@@ -6,4 +6,5 @@ build
 test
 target
 save
+log
 dependency-reduced-pom.xml
