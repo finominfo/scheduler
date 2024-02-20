@@ -1,0 +1,106 @@
+AI:
+The ability of a machine to show human ability like reasoning, learning, such as creativity.
+
+
+ML (Machine Learning):
+The set of algorithms that make intelligent machines capable of improving with time and training.
+
+
+DL (Deep Learning):
+A type of ML based on Neural Networks made of multiple layers of processing.
+
+
+Generative AI:
+DOES NOT USE Neural Networks to cluster, classify, or make predictions on existing data
+USES Neuaral Networks to generate brand new content 
+
+
+Domains of Generative AI:
+- Text generation
+- Image generation 
+  --- 2014 Generative Adversarial Network (GAN)
+  --- 2021 DALL-E (not realistic images) text->picture
+  --- Tome AI text->draft presentation
+- Music generation
+  --- 1957 The first piece of music entirely composed by AI
+  --- 2016 WaweNet - high quality audio samples
+  --- Magenta project uses Recurral Neural Networks (RNNs)
+  --- 2020 Jukebox 
+  --- speech synthesis
+- Video generation
+  --- Motion to Video image->video
+  --- Video-to-Video Synthesis (Vid2Vid) by NVIDIA video->high quality video
+  --- Make-A-Video by Meta
+
+
+OpenAI:
+- Offers a set of pre-trained, ready-to-use models
+- Powerful foundation models can be consumed without the need for long and expensive training
+- It’s not necessary to be a data scientist or an ML engineer to manipulate those models
+
+
+Some jargons of OpenAI:
+- Tokens: Tokens can be considered as word fragments or segments that are used by the API
+to process input prompts. One token in English is approximately equivalent to four characters
+- Prompt: A prompt refers to a piece of text that is given as input to an AI language model to generate a response or output
+- Context: Context refers to the words and sentences that come before the user’s prompt
+- Model confidence: Model confidence refers to the level of certainty or probability that an AI
+model assigns to a particular prediction or output  
+
+
+Main model families:
+- GPT-3: A set of models that can understand and generate natural language
+- GPT-3.5: This is a newer set of models that build upon GPT-3 and aim to improve its natural
+language understanding and generation abilities
+- Codex: A set of models that can understand and generate code in various programming languages
+  (It is deprecated because of GPT-3.5-turbo)
+
+  
+Parameters:
+- Temperature (ranging from 0 to 1): This controls the randomness of the model’s response. A
+low-level temperature makes your model more deterministic
+- Max length (ranging from 0 to 2048): This controls the length (in terms of tokens) of the
+model’s response to the user’s prompt
+- Stop sequences (user input): This makes responses end at the desired point, such as the end
+of a sentence or list
+- Top probabilities (ranging from 0 to 1): This controls which tokens the model will consider when
+generating a response. Setting this to 0.9 will consider the top 90% most likely of all possible
+tokens
+- Frequency penalty (ranging from 0 to 1): This controls the repetition of the same tokens in
+the generated response. The higher the penalty, the lower the probability of seeing the same
+tokens more than once in the same response. The penalty reduces the chance proportionally,
+based on how often a token has appeared in the text so far (this is the key difference from the
+following parameter).
+- Presence penalty (ranging from 0 to 2): This is similar to the previous one but stricter. It reduces
+the chance of repeating any token that has appeared in the text at all so far. As it is stricter than
+the frequency penalty, the presence penalty also increases the likelihood of introducing new
+topics in a response.
+- Best of (ranging from 0 to 20): This generates multiple responses and displays only the one
+with the best total probability across all its tokens.
+- Pre- and post-response text (user input): This inserts text before and after the model’s response.
+This can help prepare the model for a response.
+- Moderation: This is a fine-tuned model developed by OpenAI that can detect potentially
+sensitive or unsafe text content. Moderation uses ML algorithms to classify text as safe or
+unsafe based on its context and language use
+- Embeddings: Some models can use embeddings. These embeddings involve representing
+words or sentences in a multi-dimensional space. The mathematical distances between different
+instances in this space represent their similarity in terms of meaning. As an example, imagine
+the words queen, woman, king, and man. Ideally, in our multidimensional space, where words
+are vectors, if the representation is correct, we want to achieve the following:
+This means that the distance between woman and man should be equal to the distance between
+queen and king. Embeddings can be extremely useful in intelligent search scenarios
+- Whisper: This is a speech recognition model that can transcribe audio into text
+
+
+Methods for making models more customized:
+ - few-learning approach
+ - fine-tuning - this is more sophisticated
+In fine-tuning, the parameters of the pre-trained model are altered, either by adjusting the existing
+parameters or by adding new parameters, to better fit the data for the new task
+Feed your model with custom data, typically in the form of key-value prompts
+and completions as shown here:
+{"prompt": "<prompt text>", "completion": "<ideal generated text>"}
+{"prompt": "<prompt text>", "completion": "<ideal generated text>"}
+{"prompt": "<prompt text>", "completion": "<ideal generated text>"}
+
+
