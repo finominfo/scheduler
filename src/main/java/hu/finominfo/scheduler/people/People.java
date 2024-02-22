@@ -100,6 +100,18 @@ public class People {
                         days.add(Integer.valueOf(remaining));
                     }
                     switch (trimmedExpression.charAt(0)) {
+                        case 'u':
+                            person.setNumOfWantedHolidays(days.get(0));
+                            break;
+                        case 'p':
+                            person.setNumOfWantedFridays(days.get(0));
+                            break;
+                        case 's':
+                            person.setNumOfWantedSaturdays(days.get(0));
+                            break;
+                        case 'v':
+                            person.setNumOfWantedSundays(days.get(0));
+                            break;
                         case 'w':
                             setWantedDays(person, days);
                             break;

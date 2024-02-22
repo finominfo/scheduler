@@ -7,6 +7,7 @@ import hu.finominfo.scheduler.util.HungarianHolidays;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import hu.finominfo.scheduler.util.KeyValueStore;
@@ -61,6 +62,7 @@ public class Scheduler {
         countDays();
         setHated();
         setWanted();
+        setDesiredNumberOfFridaysAndWeekendsAndHolidays();
         setWeekendsAndHolidays();
         setWeekdays();
         balanceIMS();
@@ -300,6 +302,63 @@ public class Scheduler {
                                                         .reduce("", String::concat));
                             }
                         }));
+    }
+
+    // --------------------------------------------------------------------------------------------------
+
+    private void setDesiredNumberOfFridaysAndWeekendsAndHolidays() {
+        people
+                .entrySet()
+                .stream()
+                .forEach(entry -> {
+                    Person person = entry.getValue();
+                    final AtomicInteger num = new AtomicInteger(person.getNumOfWantedHolidays());
+                    if (num.get() > 0) {
+                        scheduleDesiredDays(person, num, holidays, "holiday");
+                    }
+                    num.set(person.getNumOfWantedFridays());
+                    if (num.get() > 0) {
+                        scheduleDesiredDays(person, num, fridays, "friday");
+                    }
+                    num.set(person.getNumOfWantedSaturdays());
+                    if (num.get() > 0) {
+                        scheduleDesiredDays(person, num, saturdays, "saturday");
+                    }
+                    num.set(person.getNumOfWantedSundays());
+                    if (num.get() > 0) {
+                        scheduleDesiredDays(person, num, sundays, "sunday");
+                    }
+                });
+    }
+
+    private void scheduleDesiredDays(Person person, final AtomicInteger num, List<Integer> specialDays, String dayName) {
+        List<Integer> possibleDays1 = new ArrayList<>();
+        specialDays
+            .stream()
+            .filter(day -> scheduled.get(day).contains(person.getName()))
+            .forEach(day -> num.decrementAndGet()); // already scheduled
+        specialDays
+            .stream()
+            .filter(day -> !scheduled.get(day).contains(person.getName()))
+            .forEach(possibleDays1::add);
+        List<Integer> possibleDays = new ArrayList<>();
+        possibleDays1
+            .stream()
+            .filter(day -> scheduled.get(day).size() < 2)
+            .forEach(possibleDays::add);
+        if (num.get() > 0) {
+            if (possibleDays.size() < num.get()) {
+                throw new RuntimeException(
+                        "Not enough days for " + person.getName() + " to work on " + dayName + "s.");
+            }
+            do {
+                int day = possibleDays.get(random.nextInt(possibleDays.size()));
+                if (!scheduled.get(day).contains(person.getName())) {
+                    scheduled.get(day).add(person.getName());
+                    num.decrementAndGet();
+                }
+            } while(num.get() > 0);
+        }
     }
 
     // --------------------------------------------------------------------------------------------------

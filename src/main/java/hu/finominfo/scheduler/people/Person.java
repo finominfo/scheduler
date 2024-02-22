@@ -14,6 +14,41 @@ public class Person {
     private final AtomicInteger numOfScheduled = new AtomicInteger(0);
     private final AtomicInteger manualDayDifference = new AtomicInteger(0);
 
+    private volatile int numOfWantedHolidays = 0;
+    private volatile int numOfWantedFridays = 0;
+    private volatile int numOfWantedSaturdays = 0;
+    private volatile int numOfWantedSundays = 0;
+
+// Add getters and setters for the above 4 fields
+    public int getNumOfWantedHolidays() {
+        return numOfWantedHolidays;
+    }
+    public void setNumOfWantedHolidays(int numOfWantedHolidays) {
+        this.numOfWantedHolidays = numOfWantedHolidays;
+    }
+    public int getNumOfWantedFridays() {
+        return numOfWantedFridays;
+    }
+    public void setNumOfWantedFridays(int numOfWantedFridays) {
+        this.numOfWantedFridays = numOfWantedFridays;
+    }
+    public int getNumOfWantedSaturdays() {
+        return numOfWantedSaturdays;
+    }
+    public void setNumOfWantedSaturdays(int numOfWantedSaturdays) {
+        this.numOfWantedSaturdays = numOfWantedSaturdays;
+    }
+    public int getNumOfWantedSundays() {
+        return numOfWantedSundays;
+    }
+    public void setNumOfWantedSundays(int numOfWantedSundays) {
+        this.numOfWantedSundays = numOfWantedSundays;
+    }
+    
+
+
+
+
     private volatile boolean nofo = false;
     private volatile boolean hatesWeekends = false;
     private volatile boolean hatesWeekdays = false;
