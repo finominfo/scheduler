@@ -294,8 +294,10 @@ public class ExcelExporter {
                     row, "" + weAll);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + nhAll);
+            //colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
+            //        row, "" + allAllPlusNhAll); 
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
-                    row, "" + allAllPlusNhAll); 
+                    row, "" + allAll); 
 
             List<Integer> monToThu = scheduled.stream()
                     .filter(s1 -> !weekends.contains(s1))

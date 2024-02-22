@@ -255,7 +255,7 @@ public class Scheduler {
     // --------------------------------------------------------------------------------------------------
 
     private void setWanted() {
-        people
+    people
                 .entrySet()
                 .stream()
                 .forEach(entry -> entry
