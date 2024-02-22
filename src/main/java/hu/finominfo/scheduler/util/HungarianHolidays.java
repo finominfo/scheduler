@@ -19,10 +19,11 @@ public class HungarianHolidays {
         // Add National Day (March 15)
         holidays.add(LocalDate.of(year, Month.MARCH, 15));
 
-        // Add Easter Sunday and Monday (date varies each year)
+        // Add Easter Sunday and Monday and previous Friday (date varies each year)
         LocalDate easterDate = calculateEasterDate(year);
         holidays.add(easterDate);
         holidays.add(easterDate.plusDays(1));
+        holidays.add(easterDate.minusDays(2));
 
         // Add Labour Day (May 1)
         holidays.add(LocalDate.of(year, Month.MAY, 1));
