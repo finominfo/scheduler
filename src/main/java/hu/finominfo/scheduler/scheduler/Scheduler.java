@@ -355,6 +355,9 @@ public class Scheduler {
                 int day = possibleDays.get(random.nextInt(possibleDays.size()));
                 if (!scheduled.get(day).contains(person.getName())) {
                     scheduled.get(day).add(person.getName());
+                    if (getFoNames().get(day) == null || getFoNames().get(day).isEmpty()) {
+                        foNames.put(day, person.getName());
+                    }
                     num.decrementAndGet();
                 }
             } while(num.get() > 0);
