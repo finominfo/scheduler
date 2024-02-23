@@ -119,7 +119,12 @@ public class KeyValueStore {
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            //If the table not exists, then create it
+            if (e.getErrorCode() == 42102) {
+                createDatabase();
+            } else {
+                e.printStackTrace();
+            }
         }
         return names;
     }
