@@ -294,16 +294,16 @@ public class ExcelExporter {
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + scheduled.size());
 
-            long weAll = keyValueStore.sum(name, year, monthValue, "WE") + ims1Weekend + ims2Weekend;
+            long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size(); //Ebben benne vannak az ünnepek is
+            long frAll = keyValueStore.sum(name, year, monthValue, "FR") + numOfFridays;
+            long suAll = keyValueStore.sum(name, year, monthValue, "SU") + numOfSundays;
+            long weAll = keyValueStore.sum(name, year, monthValue, "WE") + numOfSaturdays + numOfSundays;
             long nhwdAll = keyValueStore.sum(name, year, monthValue, "NHWD") + numOfWeekdayHolidays;
             long nhfrAll = keyValueStore.sum(name, year, monthValue, "NHFR") + numOfFridayHolidays;
             long nhsaAll = keyValueStore.sum(name, year, monthValue, "NHSA") + numOfSaturdayHolidays;
             long nhsuAll = keyValueStore.sum(name, year, monthValue, "NHSU") + numOfSundayHolidays;
             long nhAll = nhwdAll + nhfrAll + nhsaAll + nhsuAll;
-            long allAll = keyValueStore.sum(name, year, monthValue, "ALL") + scheduled.size(); 
-            long frAll = keyValueStore.sum(name, year, monthValue, "FR") + numOfFridays;
-            long mon2ThuAll = allAll - weAll - (frAll + nhfrAll) - nhwdAll;
-            long suAll = keyValueStore.sum(name, year, monthValue, "SU") + numOfSundays;
+            long mon2ThuAll = allAll - (weAll + nhsaAll + nhsuAll) - (frAll + nhfrAll) - nhwdAll;
             long saAll = weAll - suAll;
 
 
@@ -408,14 +408,14 @@ public class ExcelExporter {
             row.createCell(colNum++, CellType.NUMERIC);
             sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, colNum - 2, colNum - 1));
 
+            keyValueStore.writeData(name, year, monthValue, "ALL", scheduled.size());
+            keyValueStore.writeData(name, year, monthValue, "FR", (int) numOfFridays);
+            keyValueStore.writeData(name, year, monthValue, "SU", (int) numOfSundays);
             keyValueStore.writeData(name, year, monthValue, "WE", (int) (numOfSaturdays + numOfSundays));
             keyValueStore.writeData(name, year, monthValue, "NHWD", (int) numOfWeekdayHolidays);
             keyValueStore.writeData(name, year, monthValue, "NHFR", (int) numOfFridayHolidays);
             keyValueStore.writeData(name, year, monthValue, "NHSA", (int) numOfSaturdayHolidays);
             keyValueStore.writeData(name, year, monthValue, "NHSU", (int) numOfSundayHolidays);
-            keyValueStore.writeData(name, year, monthValue, "ALL", scheduled.size());
-            keyValueStore.writeData(name, year, monthValue, "FR", (int) numOfFridays);
-            keyValueStore.writeData(name, year, monthValue, "SU", (int) numOfSundays);
 
         }
 
@@ -451,23 +451,6 @@ public class ExcelExporter {
             workbook.write(outputStream);
         }
         workbook.close();
-    }
-
-
-    public static Set<LocalDate> findSpecificFridaysOfYear(int year) {
-        Set<LocalDate> fridays = new HashSet<>();
-
-        LocalDate date = LocalDate.of(year, 1, 1); // Start from January 1st of the given year
-        LocalDate endDate = LocalDate.of(year, 12, 31); // End on December 31st of the given year
-
-        while (!date.isAfter(endDate)) {
-            if (date.getDayOfWeek() == DayOfWeek.FRIDAY) {
-                fridays.add(date);
-            }
-            date = date.plusDays(1); // Move to the next day
-        }
-
-        return fridays;
     }
 
 
