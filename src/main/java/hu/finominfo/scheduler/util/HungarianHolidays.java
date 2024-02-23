@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 public class HungarianHolidays {
 
-    // Define a method to get Hungarian holidays for a specific month
-    public static List<LocalDate> getHolidaysForMonth(int year, Month month) {
+    // Define a method to get Hungarian holidays for a specific year
+    public static List<LocalDate> getHolidaysForYear(int year) {
         List<LocalDate> holidays = new ArrayList<>();
 
         // Add New Year's Day (January 1)
@@ -47,11 +47,17 @@ public class HungarianHolidays {
         // Add Second Day of Christmas (December 26)
         holidays.add(LocalDate.of(year, Month.DECEMBER, 26));
 
+        return holidays;
+    }
+
+    // Define a method to get Hungarian holidays for a specific month
+    public static List<LocalDate> getHolidaysForMonth(int year, Month month) {
         // Filter the holidays for the given month
-        return holidays.stream()
+        return getHolidaysForYear(year).stream()
                 .filter(date -> date.getMonth() == month)
                 .collect(Collectors.toList());
     }
+
 
     // Calculate the date of Easter Sunday using Zeller's Congruence
     private static LocalDate calculateEasterDate(int year) {
