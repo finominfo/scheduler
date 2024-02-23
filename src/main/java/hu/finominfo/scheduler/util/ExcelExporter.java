@@ -348,7 +348,7 @@ public class ExcelExporter {
                     row, "" + suAll);
 
                     colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
-                    row, "" + weAll);
+                    row, "" + (weAll + nhsaAll + nhsuAll));
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
                     row, "" + nhAll);
             colNum = writeNewCell(colNum, (rowNum & 1) == 0 ? headerLightGreenCellStyle : headerLightOrangeCellStyle,
