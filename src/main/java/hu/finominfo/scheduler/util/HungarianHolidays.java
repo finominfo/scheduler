@@ -29,7 +29,7 @@ public class HungarianHolidays {
         holidays.add(LocalDate.of(year, Month.MAY, 1));
 
         // Add Whit Monday (Pentecost - date varies each year)
-        LocalDate pentecost = easterDate.plus(49, ChronoUnit.DAYS);
+        LocalDate pentecost = easterDate.plus(50, ChronoUnit.DAYS);
         holidays.add(pentecost);
 
         // Add State Foundation Day (August 20)
