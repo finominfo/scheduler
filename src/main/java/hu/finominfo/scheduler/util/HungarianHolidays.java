@@ -21,7 +21,7 @@ public class HungarianHolidays {
 
         // Add Easter Sunday and Monday and previous Friday (date varies each year)
         LocalDate easterDate = calculateEasterDate(year);
-        holidays.add(easterDate);
+        //holidays.add(easterDate);
         holidays.add(easterDate.plusDays(1));
         holidays.add(easterDate.minusDays(2));
 
