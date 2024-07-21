@@ -370,7 +370,11 @@ public class Scheduler {
     private void countDays() {
         LocalDate result = localDate;
         while (result.getMonthValue() == localDate.getMonthValue()) {
-            switch (result.getDayOfWeek()) {
+            if (result.getYear() == 2024 && result.getMonthValue() == 8 && result.getDayOfMonth() == 3) {
+                mondays.add(result.getDayOfMonth());
+            } else if (result.getYear() == 2024 && result.getMonthValue() == 8 && result.getDayOfMonth() == 19) {
+                saturdays.add(result.getDayOfMonth());
+            } else switch (result.getDayOfWeek()) {
                 case MONDAY:
                     mondays.add(result.getDayOfMonth());
                     break;
