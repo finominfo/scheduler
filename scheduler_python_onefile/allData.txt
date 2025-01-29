@@ -1,0 +1,88 @@
+Békési Tamás 2025 2 ALL 6
+Békési Tamás 2025 2 FR 2
+Békési Tamás 2025 2 SU 1
+Békési Tamás 2025 2 WE 1
+Békési Tamás 2025 2 NHWD 0
+Békési Tamás 2025 2 NHFR 0
+Békési Tamás 2025 2 NHSA 0
+Békési Tamás 2025 2 NHSU 0
+Fekete József 2025 2 ALL 5
+Fekete József 2025 2 FR 1
+Fekete József 2025 2 SU 1
+Fekete József 2025 2 WE 1
+Fekete József 2025 2 NHWD 0
+Fekete József 2025 2 NHFR 0
+Fekete József 2025 2 NHSA 0
+Fekete József 2025 2 NHSU 0
+Granc Róbert 2025 2 ALL 6
+Granc Róbert 2025 2 FR 1
+Granc Róbert 2025 2 SU 1
+Granc Róbert 2025 2 WE 2
+Granc Róbert 2025 2 NHWD 0
+Granc Róbert 2025 2 NHFR 0
+Granc Róbert 2025 2 NHSA 0
+Granc Róbert 2025 2 NHSU 0
+Hossam Youssef 2025 2 ALL 6
+Hossam Youssef 2025 2 FR 1
+Hossam Youssef 2025 2 SU 1
+Hossam Youssef 2025 2 WE 1
+Hossam Youssef 2025 2 NHWD 0
+Hossam Youssef 2025 2 NHFR 0
+Hossam Youssef 2025 2 NHSA 0
+Hossam Youssef 2025 2 NHSU 0
+Islam Sayed 2025 2 ALL 6
+Islam Sayed 2025 2 FR 0
+Islam Sayed 2025 2 SU 1
+Islam Sayed 2025 2 WE 1
+Islam Sayed 2025 2 NHWD 0
+Islam Sayed 2025 2 NHFR 0
+Islam Sayed 2025 2 NHSA 0
+Islam Sayed 2025 2 NHSU 0
+Maher Adly Maher 2025 2 ALL 6
+Maher Adly Maher 2025 2 FR 0
+Maher Adly Maher 2025 2 SU 0
+Maher Adly Maher 2025 2 WE 1
+Maher Adly Maher 2025 2 NHWD 0
+Maher Adly Maher 2025 2 NHFR 0
+Maher Adly Maher 2025 2 NHSA 0
+Maher Adly Maher 2025 2 NHSU 0
+Nagy Zoltán 2025 2 ALL 5
+Nagy Zoltán 2025 2 FR 0
+Nagy Zoltán 2025 2 SU 1
+Nagy Zoltán 2025 2 WE 2
+Nagy Zoltán 2025 2 NHWD 0
+Nagy Zoltán 2025 2 NHFR 0
+Nagy Zoltán 2025 2 NHSA 0
+Nagy Zoltán 2025 2 NHSU 0
+Pintér Dávid 2025 2 ALL 7
+Pintér Dávid 2025 2 FR 2
+Pintér Dávid 2025 2 SU 0
+Pintér Dávid 2025 2 WE 2
+Pintér Dávid 2025 2 NHWD 0
+Pintér Dávid 2025 2 NHFR 0
+Pintér Dávid 2025 2 NHSA 0
+Pintér Dávid 2025 2 NHSU 0
+Ritter Gergő 2025 2 ALL 5
+Ritter Gergő 2025 2 FR 1
+Ritter Gergő 2025 2 SU 1
+Ritter Gergő 2025 2 WE 3
+Ritter Gergő 2025 2 NHWD 0
+Ritter Gergő 2025 2 NHFR 0
+Ritter Gergő 2025 2 NHSA 0
+Ritter Gergő 2025 2 NHSU 0
+Tima Gergely 2025 2 ALL 6
+Tima Gergely 2025 2 FR 0
+Tima Gergely 2025 2 SU 0
+Tima Gergely 2025 2 WE 0
+Tima Gergely 2025 2 NHWD 0
+Tima Gergely 2025 2 NHFR 0
+Tima Gergely 2025 2 NHSA 0
+Tima Gergely 2025 2 NHSU 0
+Tóth Sándor 2025 2 ALL 4
+Tóth Sándor 2025 2 FR 0
+Tóth Sándor 2025 2 SU 1
+Tóth Sándor 2025 2 WE 2
+Tóth Sándor 2025 2 NHWD 0
+Tóth Sándor 2025 2 NHFR 0
+Tóth Sándor 2025 2 NHSA 0
+Tóth Sándor 2025 2 NHSU 0
